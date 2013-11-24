@@ -1,0 +1,75 @@
+<html>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script type="text/javascript">
+function date2Field(fieldid){
+	var dt = new Date();
+	console.log(dt);
+	$('#'+fieldid).val(dt.getHours()+
+		':'+dt.getMinutes()+
+		':'+dt.getSeconds()+
+		'.'+dt.getMilliseconds()+'000');
+}
+function sendTime(){
+	date2Field('jssent_time');
+	$.get('http://localhost:9000/tests/ring',function(data){
+	console.log(data);
+	$('#pygot_time').val(data.got_time);
+	$('#pysent_time').val(data.sent_time);
+	date2Field('jsgot_time');
+	});
+}
+
+function calcDiff(sent,got){
+var req_sent_arr = $(sent).val().split(':');
+var req_got_arr= $(got).val().split(':');
+
+var req_sent_sec = parseFloat(req_sent_arr.pop());
+var req_got_sec = parseFloat(req_got_arr.pop());
+
+var req_sent_min = parseInt(req_sent_arr.pop());
+var req_got_min = parseInt(req_got_arr.pop());
+
+var min_carry = (req_got_min-req_sent_min)*60;
+var req_diff = (req_got_sec-req_sent_sec)+min_carry;
+$('#diff_stat').text( $('#diff_stat').text() + req_diff+'\t');
+}
+
+function calcRequestDiff(){
+calcDiff('#jssent_time','#pygot_time');
+calcDiff('#pysent_time','#jsgot_time');
+$('#diff_stat').text( $('#diff_stat').text() +'\n');
+}
+</script>
+<body>
+
+<button onclick="sendTime()">send Time</button>
+<button onclick="calcRequestDiff()">calc diff</button>
+<br /><br />
+
+<label for="render_time">Render Time:</label>
+{% if render_time %}
+<input type="text" id="render_time" value="{{render_time.hour}}:{{render_time.minute}}:{{render_time.second}}.{{render_time.microsecond}}" /> <br />
+{% endif %}
+
+<br />
+
+<label for="jssent_time">Request Sent Time:</label>
+<input text="text" id="jssent_time" />
+<br />
+
+<label for="pygot_time">Request Recieved Time:</label>
+<input type="text" id="pygot_time" />
+<br />
+
+<label for="pysent_time">Response Sent Time:</label>
+<input type="text" id="pysent_time" />
+<br />
+
+<label for="jsgot_time">Response Recieved Time:</label>
+<input type="text" id="jsgot_time" />
+
+<br />
+<textarea id="diff_stat"></textarea>
+
+</body>
+</html>

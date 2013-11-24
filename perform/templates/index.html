@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link href="/static/styles/kendo.common.min.css" rel="stylesheet" />
+<link href="/static/styles/kendo.metroblack.min.css" rel="stylesheet" />
+<link href="/static/perform.css" rel="stylesheet" />
+<script src="/static/jquery-2.0.3.min.js"></script>
+<script src="/static/js/kendo.core.min.js"></script>
+<script src="/static/js/kendo.menu.min.js"></script>
+<script src="/static/js/kendo.popup.min.js"></script>
+<script src="/static/js/console.js"></script>
+<script type="text/javascript" src="/static/perform.js"></script>
+<title>Aed ~ Perform {{ paradigm_name }} Experiment</title>
+</head>
+<body>
+<div id="div_topmenu">
+	<ul id="menu">
+		<li>File
+				<ul>
+					<li>Open</li>
+					<li>Save</li>
+					<li>Restart</li>
+					<li>Print Experiment</li>
+				</ul>
+		</li>			
+		<li>Intervals
+			<ul id="list_intervals">
+			</ul>
+		</li>
+		<li>Graph</li>
+		<li>Options</li>
+	</ul>
+	<div id="div_experiment_name"><b>Current Experiment: </b><i>none</i></div>
+</div>
+<div class="leftside">
+	<div id="div_counters">
+		<b>Experiment Time: </b><label id="label_exp_time"></label><br />
+	</div>
+	<div id="div_logger">
+			<h4>Logger</h4>
+			<div class="console"></div>
+	</div>
+</div>
+<div class="rightside">
+	<div id="div_controls">
+		<input type="checkbox" id="check_deviceon">
+		<label for="check_deviceon">Device on</label>
+		|
+		<button id="btn_mark" class="k-button">Mark Time</button>
+		|
+		<button id="btn_start" class="k-button">START</button>
+		<button id="btn_stop" class="k-button">STOP</button>
+	</div>
+	<div id="graph">
+		Graph
+	</div>
+	<div id="div_flexbuttons">
+		flex buttons
+	</div>
+</div>
+</body>
+</html>
