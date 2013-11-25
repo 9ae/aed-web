@@ -1,0 +1,1060 @@
+[
+{
+  "pk": 1, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "permission", 
+    "name": "permission", 
+    "app_label": "auth"
+  }
+},
+{
+  "pk": 2, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "group", 
+    "name": "group", 
+    "app_label": "auth"
+  }
+},
+{
+  "pk": 3, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "user", 
+    "name": "user", 
+    "app_label": "auth"
+  }
+},
+{
+  "pk": 4, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "contenttype", 
+    "name": "content type", 
+    "app_label": "contenttypes"
+  }
+},
+{
+  "pk": 5, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "session", 
+    "name": "session", 
+    "app_label": "sessions"
+  }
+},
+{
+  "pk": 6, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "site", 
+    "name": "site", 
+    "app_label": "sites"
+  }
+},
+{
+  "pk": 7, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "logentry", 
+    "name": "log entry", 
+    "app_label": "admin"
+  }
+},
+{
+  "pk": 8, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "experiment", 
+    "name": "experiment", 
+    "app_label": "perform"
+  }
+},
+{
+  "pk": 9, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "trial", 
+    "name": "trial", 
+    "app_label": "perform"
+  }
+},
+{
+  "pk": 10, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "happening", 
+    "name": "happening", 
+    "app_label": "perform"
+  }
+},
+{
+  "pk": 11, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "paradigm", 
+    "name": "paradigm", 
+    "app_label": "edit"
+  }
+},
+{
+  "pk": 12, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "protocol", 
+    "name": "protocol", 
+    "app_label": "edit"
+  }
+},
+{
+  "pk": 13, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "interval", 
+    "name": "interval", 
+    "app_label": "edit"
+  }
+},
+{
+  "pk": 14, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "intervalproperty", 
+    "name": "interval property", 
+    "app_label": "edit"
+  }
+},
+{
+  "pk": 15, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "action", 
+    "name": "action", 
+    "app_label": "edit"
+  }
+},
+{
+  "pk": 16, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "actionproperty", 
+    "name": "action property", 
+    "app_label": "edit"
+  }
+},
+{
+  "pk": 17, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "event", 
+    "name": "event", 
+    "app_label": "edit"
+  }
+},
+{
+  "pk": 18, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "eventproperty", 
+    "name": "event property", 
+    "app_label": "edit"
+  }
+},
+{
+  "pk": 19, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "intervalbegin", 
+    "name": "interval begin", 
+    "app_label": "edit"
+  }
+},
+{
+  "pk": 20, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "intervalend", 
+    "name": "interval end", 
+    "app_label": "edit"
+  }
+},
+{
+  "pk": 21, 
+  "model": "contenttypes.contenttype", 
+  "fields": {
+    "model": "intervalaction", 
+    "name": "interval action", 
+    "app_label": "edit"
+  }
+},
+{
+  "pk": "69b1ktupunqdochwtjxnp1k6shbzkdrn", 
+  "model": "sessions.session", 
+  "fields": {
+    "expire_date": "2013-12-09T03:20:37.974Z", 
+    "session_data": "NGRkOTMwYTViNmUwMWEyNzUyMTc5MWM4OWJlOTU5OGFlNzI2NTlkYjqAAn1xAShVEl9hdXRoX3VzZXJfYmFja2VuZHECVSlkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZHEDVQ1fYXV0aF91c2VyX2lkcQRLAXUu"
+  }
+},
+{
+  "pk": 1, 
+  "model": "sites.site", 
+  "fields": {
+    "domain": "example.com", 
+    "name": "example.com"
+  }
+},
+{
+  "pk": 1, 
+  "model": "edit.paradigm", 
+  "fields": {
+    "file_location": "/Users/ari/slytherin/aed-web/paradigms/Mickey.py", 
+    "created_on": "2013-11-25T03:20:57.697Z", 
+    "name": "Mickey"
+  }
+},
+{
+  "pk": 1, 
+  "model": "edit.protocol", 
+  "fields": {
+    "modified_on": "2013-11-25T03:21:16.175Z", 
+    "created_on": "2013-11-25T03:21:16.175Z", 
+    "paradigm": 1, 
+    "name": "Simple Test", 
+    "trial_duration": "10"
+  }
+},
+{
+  "pk": 1, 
+  "model": "edit.interval", 
+  "fields": {
+    "duration": "2", 
+    "type": "Wait", 
+    "protocol": 1, 
+    "order": 1, 
+    "name": "precursor"
+  }
+},
+{
+  "pk": 2, 
+  "model": "edit.interval", 
+  "fields": {
+    "duration": "3", 
+    "type": "Tone", 
+    "protocol": 1, 
+    "order": 2, 
+    "name": "play tone"
+  }
+},
+{
+  "pk": 3, 
+  "model": "edit.interval", 
+  "fields": {
+    "duration": "7", 
+    "type": "Present", 
+    "protocol": 1, 
+    "order": 3, 
+    "name": "reward interval"
+  }
+},
+{
+  "pk": 1, 
+  "model": "edit.action", 
+  "fields": {
+    "paradigm": 1, 
+    "type": "LeverPress"
+  }
+},
+{
+  "pk": 1, 
+  "model": "edit.event", 
+  "fields": {
+    "type": "Restart", 
+    "protocol": 1, 
+    "name": "restart trial"
+  }
+},
+{
+  "pk": 2, 
+  "model": "edit.event", 
+  "fields": {
+    "type": "Reward", 
+    "protocol": 1, 
+    "name": "reward1"
+  }
+},
+{
+  "pk": 1, 
+  "model": "edit.eventproperty", 
+  "fields": {
+    "prop_name": "valve", 
+    "prop_val_dec": null, 
+    "prop_val_str": "", 
+    "prop_val_boo": false, 
+    "prop_val_int": 1, 
+    "prop_type": "INT", 
+    "event": 2
+  }
+},
+{
+  "pk": 1, 
+  "model": "edit.intervalaction", 
+  "fields": {
+    "action": 1, 
+    "interval": 3, 
+    "order": 1, 
+    "event": 2
+  }
+},
+{
+  "pk": 2, 
+  "model": "edit.intervalaction", 
+  "fields": {
+    "action": 1, 
+    "interval": 3, 
+    "order": 2, 
+    "event": 1
+  }
+},
+{
+  "pk": 1, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_permission", 
+    "name": "Can add permission", 
+    "content_type": 1
+  }
+},
+{
+  "pk": 2, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_permission", 
+    "name": "Can change permission", 
+    "content_type": 1
+  }
+},
+{
+  "pk": 3, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_permission", 
+    "name": "Can delete permission", 
+    "content_type": 1
+  }
+},
+{
+  "pk": 4, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_group", 
+    "name": "Can add group", 
+    "content_type": 2
+  }
+},
+{
+  "pk": 5, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_group", 
+    "name": "Can change group", 
+    "content_type": 2
+  }
+},
+{
+  "pk": 6, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_group", 
+    "name": "Can delete group", 
+    "content_type": 2
+  }
+},
+{
+  "pk": 7, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_user", 
+    "name": "Can add user", 
+    "content_type": 3
+  }
+},
+{
+  "pk": 8, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_user", 
+    "name": "Can change user", 
+    "content_type": 3
+  }
+},
+{
+  "pk": 9, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_user", 
+    "name": "Can delete user", 
+    "content_type": 3
+  }
+},
+{
+  "pk": 10, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_contenttype", 
+    "name": "Can add content type", 
+    "content_type": 4
+  }
+},
+{
+  "pk": 11, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_contenttype", 
+    "name": "Can change content type", 
+    "content_type": 4
+  }
+},
+{
+  "pk": 12, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_contenttype", 
+    "name": "Can delete content type", 
+    "content_type": 4
+  }
+},
+{
+  "pk": 13, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_session", 
+    "name": "Can add session", 
+    "content_type": 5
+  }
+},
+{
+  "pk": 14, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_session", 
+    "name": "Can change session", 
+    "content_type": 5
+  }
+},
+{
+  "pk": 15, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_session", 
+    "name": "Can delete session", 
+    "content_type": 5
+  }
+},
+{
+  "pk": 16, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_site", 
+    "name": "Can add site", 
+    "content_type": 6
+  }
+},
+{
+  "pk": 17, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_site", 
+    "name": "Can change site", 
+    "content_type": 6
+  }
+},
+{
+  "pk": 18, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_site", 
+    "name": "Can delete site", 
+    "content_type": 6
+  }
+},
+{
+  "pk": 19, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_logentry", 
+    "name": "Can add log entry", 
+    "content_type": 7
+  }
+},
+{
+  "pk": 20, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_logentry", 
+    "name": "Can change log entry", 
+    "content_type": 7
+  }
+},
+{
+  "pk": 21, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_logentry", 
+    "name": "Can delete log entry", 
+    "content_type": 7
+  }
+},
+{
+  "pk": 22, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_experiment", 
+    "name": "Can add experiment", 
+    "content_type": 8
+  }
+},
+{
+  "pk": 23, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_experiment", 
+    "name": "Can change experiment", 
+    "content_type": 8
+  }
+},
+{
+  "pk": 24, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_experiment", 
+    "name": "Can delete experiment", 
+    "content_type": 8
+  }
+},
+{
+  "pk": 25, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_trial", 
+    "name": "Can add trial", 
+    "content_type": 9
+  }
+},
+{
+  "pk": 26, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_trial", 
+    "name": "Can change trial", 
+    "content_type": 9
+  }
+},
+{
+  "pk": 27, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_trial", 
+    "name": "Can delete trial", 
+    "content_type": 9
+  }
+},
+{
+  "pk": 28, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_happening", 
+    "name": "Can add happening", 
+    "content_type": 10
+  }
+},
+{
+  "pk": 29, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_happening", 
+    "name": "Can change happening", 
+    "content_type": 10
+  }
+},
+{
+  "pk": 30, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_happening", 
+    "name": "Can delete happening", 
+    "content_type": 10
+  }
+},
+{
+  "pk": 31, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_paradigm", 
+    "name": "Can add paradigm", 
+    "content_type": 11
+  }
+},
+{
+  "pk": 32, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_paradigm", 
+    "name": "Can change paradigm", 
+    "content_type": 11
+  }
+},
+{
+  "pk": 33, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_paradigm", 
+    "name": "Can delete paradigm", 
+    "content_type": 11
+  }
+},
+{
+  "pk": 34, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_protocol", 
+    "name": "Can add protocol", 
+    "content_type": 12
+  }
+},
+{
+  "pk": 35, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_protocol", 
+    "name": "Can change protocol", 
+    "content_type": 12
+  }
+},
+{
+  "pk": 36, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_protocol", 
+    "name": "Can delete protocol", 
+    "content_type": 12
+  }
+},
+{
+  "pk": 37, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_interval", 
+    "name": "Can add interval", 
+    "content_type": 13
+  }
+},
+{
+  "pk": 38, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_interval", 
+    "name": "Can change interval", 
+    "content_type": 13
+  }
+},
+{
+  "pk": 39, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_interval", 
+    "name": "Can delete interval", 
+    "content_type": 13
+  }
+},
+{
+  "pk": 40, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_intervalproperty", 
+    "name": "Can add interval property", 
+    "content_type": 14
+  }
+},
+{
+  "pk": 41, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_intervalproperty", 
+    "name": "Can change interval property", 
+    "content_type": 14
+  }
+},
+{
+  "pk": 42, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_intervalproperty", 
+    "name": "Can delete interval property", 
+    "content_type": 14
+  }
+},
+{
+  "pk": 43, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_action", 
+    "name": "Can add action", 
+    "content_type": 15
+  }
+},
+{
+  "pk": 44, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_action", 
+    "name": "Can change action", 
+    "content_type": 15
+  }
+},
+{
+  "pk": 45, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_action", 
+    "name": "Can delete action", 
+    "content_type": 15
+  }
+},
+{
+  "pk": 46, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_actionproperty", 
+    "name": "Can add action property", 
+    "content_type": 16
+  }
+},
+{
+  "pk": 47, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_actionproperty", 
+    "name": "Can change action property", 
+    "content_type": 16
+  }
+},
+{
+  "pk": 48, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_actionproperty", 
+    "name": "Can delete action property", 
+    "content_type": 16
+  }
+},
+{
+  "pk": 49, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_event", 
+    "name": "Can add event", 
+    "content_type": 17
+  }
+},
+{
+  "pk": 50, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_event", 
+    "name": "Can change event", 
+    "content_type": 17
+  }
+},
+{
+  "pk": 51, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_event", 
+    "name": "Can delete event", 
+    "content_type": 17
+  }
+},
+{
+  "pk": 52, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_eventproperty", 
+    "name": "Can add event property", 
+    "content_type": 18
+  }
+},
+{
+  "pk": 53, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_eventproperty", 
+    "name": "Can change event property", 
+    "content_type": 18
+  }
+},
+{
+  "pk": 54, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_eventproperty", 
+    "name": "Can delete event property", 
+    "content_type": 18
+  }
+},
+{
+  "pk": 55, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_intervalbegin", 
+    "name": "Can add interval begin", 
+    "content_type": 19
+  }
+},
+{
+  "pk": 56, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_intervalbegin", 
+    "name": "Can change interval begin", 
+    "content_type": 19
+  }
+},
+{
+  "pk": 57, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_intervalbegin", 
+    "name": "Can delete interval begin", 
+    "content_type": 19
+  }
+},
+{
+  "pk": 58, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_intervalend", 
+    "name": "Can add interval end", 
+    "content_type": 20
+  }
+},
+{
+  "pk": 59, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_intervalend", 
+    "name": "Can change interval end", 
+    "content_type": 20
+  }
+},
+{
+  "pk": 60, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_intervalend", 
+    "name": "Can delete interval end", 
+    "content_type": 20
+  }
+},
+{
+  "pk": 61, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "add_intervalaction", 
+    "name": "Can add interval action", 
+    "content_type": 21
+  }
+},
+{
+  "pk": 62, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "change_intervalaction", 
+    "name": "Can change interval action", 
+    "content_type": 21
+  }
+},
+{
+  "pk": 63, 
+  "model": "auth.permission", 
+  "fields": {
+    "codename": "delete_intervalaction", 
+    "name": "Can delete interval action", 
+    "content_type": 21
+  }
+},
+{
+  "pk": 1, 
+  "model": "auth.user", 
+  "fields": {
+    "username": "draco", 
+    "first_name": "", 
+    "last_name": "", 
+    "is_active": true, 
+    "is_superuser": true, 
+    "is_staff": true, 
+    "last_login": "2013-11-25T03:20:37.969Z", 
+    "groups": [], 
+    "user_permissions": [], 
+    "password": "pbkdf2_sha256$10000$7cxOdotrVxfA$tTacg5ZQHsYRF/2ALg//jeFsgL5paTRum5cu/E+5vTU=", 
+    "email": "alice@valour.me", 
+    "date_joined": "2013-11-25T03:18:41.202Z"
+  }
+},
+{
+  "pk": 1, 
+  "model": "admin.logentry", 
+  "fields": {
+    "action_flag": 1, 
+    "action_time": "2013-11-25T03:20:57.698Z", 
+    "object_repr": "1", 
+    "object_id": "1", 
+    "change_message": "", 
+    "user": 1, 
+    "content_type": 11
+  }
+},
+{
+  "pk": 2, 
+  "model": "admin.logentry", 
+  "fields": {
+    "action_flag": 1, 
+    "action_time": "2013-11-25T03:21:16.175Z", 
+    "object_repr": "1", 
+    "object_id": "1", 
+    "change_message": "", 
+    "user": 1, 
+    "content_type": 12
+  }
+},
+{
+  "pk": 3, 
+  "model": "admin.logentry", 
+  "fields": {
+    "action_flag": 1, 
+    "action_time": "2013-11-25T03:21:30.080Z", 
+    "object_repr": "1", 
+    "object_id": "1", 
+    "change_message": "", 
+    "user": 1, 
+    "content_type": 15
+  }
+},
+{
+  "pk": 4, 
+  "model": "admin.logentry", 
+  "fields": {
+    "action_flag": 1, 
+    "action_time": "2013-11-25T03:22:26.114Z", 
+    "object_repr": "1", 
+    "object_id": "1", 
+    "change_message": "", 
+    "user": 1, 
+    "content_type": 17
+  }
+},
+{
+  "pk": 5, 
+  "model": "admin.logentry", 
+  "fields": {
+    "action_flag": 1, 
+    "action_time": "2013-11-25T03:23:08.131Z", 
+    "object_repr": "2", 
+    "object_id": "2", 
+    "change_message": "", 
+    "user": 1, 
+    "content_type": 17
+  }
+},
+{
+  "pk": 6, 
+  "model": "admin.logentry", 
+  "fields": {
+    "action_flag": 1, 
+    "action_time": "2013-11-25T03:23:33.052Z", 
+    "object_repr": "EventProperty object", 
+    "object_id": "1", 
+    "change_message": "", 
+    "user": 1, 
+    "content_type": 18
+  }
+},
+{
+  "pk": 7, 
+  "model": "admin.logentry", 
+  "fields": {
+    "action_flag": 1, 
+    "action_time": "2013-11-25T03:42:14.708Z", 
+    "object_repr": "[1] precursor(Wait) < [1] Simple Test<Mickey", 
+    "object_id": "1", 
+    "change_message": "", 
+    "user": 1, 
+    "content_type": 13
+  }
+},
+{
+  "pk": 8, 
+  "model": "admin.logentry", 
+  "fields": {
+    "action_flag": 2, 
+    "action_time": "2013-11-25T03:42:21.033Z", 
+    "object_repr": "[1] precursor(Wait) < [1] Simple Test<Mickey", 
+    "object_id": "1", 
+    "change_message": "No fields changed.", 
+    "user": 1, 
+    "content_type": 13
+  }
+},
+{
+  "pk": 9, 
+  "model": "admin.logentry", 
+  "fields": {
+    "action_flag": 1, 
+    "action_time": "2013-11-25T03:42:41.395Z", 
+    "object_repr": "[2] play tone(Tone) < [1] Simple Test<Mickey", 
+    "object_id": "2", 
+    "change_message": "", 
+    "user": 1, 
+    "content_type": 13
+  }
+},
+{
+  "pk": 10, 
+  "model": "admin.logentry", 
+  "fields": {
+    "action_flag": 1, 
+    "action_time": "2013-11-25T03:43:13.728Z", 
+    "object_repr": "[3] reward interval(Present) < [1] Simple Test<Mickey", 
+    "object_id": "3", 
+    "change_message": "", 
+    "user": 1, 
+    "content_type": 13
+  }
+},
+{
+  "pk": 11, 
+  "model": "admin.logentry", 
+  "fields": {
+    "action_flag": 1, 
+    "action_time": "2013-11-25T03:44:25.884Z", 
+    "object_repr": "IntervalAction object", 
+    "object_id": "1", 
+    "change_message": "", 
+    "user": 1, 
+    "content_type": 21
+  }
+},
+{
+  "pk": 12, 
+  "model": "admin.logentry", 
+  "fields": {
+    "action_flag": 1, 
+    "action_time": "2013-11-25T03:44:50.286Z", 
+    "object_repr": "IntervalAction object", 
+    "object_id": "2", 
+    "change_message": "", 
+    "user": 1, 
+    "content_type": 21
+  }
+}
+]
