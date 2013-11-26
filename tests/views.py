@@ -4,7 +4,8 @@ from django.template import RequestContext, loader
 from django.shortcuts import render
 from datetime import datetime
 import time
-from django.utils import simplejson
+import json
+import mytest
 
 def index(request):
 	return HttpResponse("Hello")
@@ -27,4 +28,15 @@ def ring(request):
 		print i
 	sent_response_time = datetime.now()
 	clocky['sent_time'] = sent_response_time.time().isoformat()
-	return HttpResponse(simplejson.dumps(clocky),mimetype='application/json')
+	return HttpResponse(json.dumps(clocky),mimetype='application/json')
+
+def run_triad(request):
+	mytest.TriadFinder().run()
+	return HttpResponse({'thread':'started'}, content_type="application/json")
+
+def check_triad(request):
+	result = {'done':False}
+	if mytest.checkTriadComplete():
+		result['done'] = True
+	
+	return HttpResponse(json.dumps(result), content_type="application/json")

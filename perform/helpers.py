@@ -3,7 +3,7 @@ Created on Nov 23, 2013
 
 @author: alice
 '''
-
+import json
 def import_mod_file(filename):
 	import os
 	import sys
@@ -17,3 +17,19 @@ def import_mod_file(filename):
 	finally:
 		sys.path[:] = path # restore
 	return module
+
+class Medea(object):
+	def __init__(self):
+		self.json = {'errors':[],'content':{}}
+		
+	def addError(self,msg):
+		self.json['errors'].append(msg)
+	
+	def noErrors(self):
+		return len(self.json['errors'])==0
+	
+	def addContent(self,key,val):
+		self.json['content'][key] = val
+	
+	def serialize(self):
+		return json.dumps(self.json)
