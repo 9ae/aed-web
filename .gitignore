@@ -1,3 +1,11 @@
 *.class
 *.pyc
 *.pyo
+
+.project
+
+.pydevproject
+
+book.db
+
+db
