@@ -85,8 +85,7 @@ class Mickey(aedsdk.Paradigm):
 		
 		def at_end(self):
 			aedsdk.Interval.at_end(self)
-			print 'reward chance end @ %f'%self.exe.tk.diff()
-		
+			print 'reward chance end @ %f'%self.exe.tk.diff()		
 		
 		def on_LeverPress(self):
 			print 'give reward :) @ %f'%self.exe.tk.diff()

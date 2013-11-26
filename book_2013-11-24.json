@@ -80,19 +80,6 @@
 },
 {
   "pk": 1, 
-  "model": "edit.eventproperty", 
-  "fields": {
-    "prop_name": "valve", 
-    "prop_val_dec": null, 
-    "prop_val_str": "", 
-    "prop_val_boo": false, 
-    "prop_val_int": 1, 
-    "prop_type": "INT", 
-    "event": 2
-  }
-},
-{
-  "pk": 1, 
   "model": "edit.intervalaction", 
   "fields": {
     "action": 1, 

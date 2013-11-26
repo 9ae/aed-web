@@ -6,8 +6,9 @@ from django.shortcuts import render
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from edit.models import Protocol, Paradigm
-from helpers import Medea, import_mod_file
+from helpers import Medea
 import json
+from boss import setupExperiement
 
 from xml.etree import ElementTree as elle
 def index(request):
@@ -27,14 +28,12 @@ def load_experiment(request):
 		except ObjectDoesNotExist:
 			m.addError('protocol not found')
 	if m.noErrors():
-		paradigm = protocol.paradigm
-		parad = import_mod_file(paradigm.file_location)
-		if parad!=None:
-			paradigm_obj = eval('parad.'+paradigm.name+'()')
-			m.addContent('param',paradigm_obj)
+		db_exp = setupExperiement(protocol)
+		if db_exp!=None:
+			response_str = serializers.serialize("json", [db_exp])
 		else:
-			m.addError('failed to import '+paradigm.name)
-	
-		# response_str = serializers.serialize("json", [paradigm])
-	response_str = m.serialize()
+			m.addError('failed to import '+protocol.paradigm.name)
+			response_str = m.serialize()
+	else:
+		response_str = m.serialize()
 	return HttpResponse(response_str, content_type="application/json")

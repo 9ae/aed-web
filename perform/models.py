@@ -11,9 +11,9 @@ class Experiment(models.Model):
 
 class Trial(models.Model):
     experiment = models.ForeignKey(Experiment)
-    time_start = models.TimeField()
+    time_start = models.TimeField(auto_now_add=True)
     duration = models.DecimalField(max_digits=8, decimal_places=3,null=True, blank=True)
-    completed = models.BooleanField()
+    completed = models.BooleanField(default=False)
 
 class Happening(models.Model):
     trial = models.ForeignKey(Trial)
