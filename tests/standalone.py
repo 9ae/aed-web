@@ -3,9 +3,8 @@ Created on Nov 26, 2013
 
 @author: ari
 '''
+'''
 from threading import Thread
-
-
 class Wind(Thread):
     def __init__(self):
         Thread.__init__(self)
@@ -24,3 +23,13 @@ class Wind(Thread):
 wind = Wind()
 wind.start()
 wind.bother()
+'''
+
+import perform.janus as j
+tk = j.Timekeeper(3)
+
+i = 0
+while i<1e6:
+    if i%100==0:
+        print tk.diff()
+    i = i +1

@@ -4,6 +4,7 @@ Created on Aug 29, 2013
 @author: alice
 '''
 from datetime import datetime
+from decimal import *
 
 def last(L):
 	lenny = len(L)
@@ -20,11 +21,11 @@ class Timekeeper(object):
 		self.timelog = []
 
 	def millisec(self,t):
-		s = str(t.days * 24 * 60 * 60 + t.seconds)
-		mus = str(t.microseconds)
-		mus = mus.rjust(6,'0')
-		mis = mus[0:3]
-		return float(s+'.'+mis)
+		getcontext().prec = 8
+		s = Decimal(t.days * 24 * 60 * 60 + t.seconds)
+		mis = Decimal(t.microseconds)*Decimal(1E-6)
+		mis = Decimal(format(mis,'.3f'))
+		return s+mis
 	
 	def diff(self):
 		time_diff = datetime.now() - self.startTime
@@ -40,20 +41,6 @@ class Timekeeper(object):
 	
 	def new_trial(self):
 		self.timelog.append(datetime.now())
-	
-	'''
-	def diffSince(self, since, record=None):
-		time_diff = datetime.now() - since
-		if(record!=None):
-			if isinstance(record, str):
-				self.timelog[record] = time_diff
-			else:
-				print 'record must be a string'
-		return self.millisec(time_diff)
-
-	def diff(self, record=None):
-		return self.diffSince(self.startTime, record=record)
-	'''
 	
 	def get(self,recordName):
 		return self.timelog[recordName]

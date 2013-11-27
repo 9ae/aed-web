@@ -23,7 +23,7 @@ class Mickey(aedsdk.Paradigm):
 			self.valve = 0
 
 		def perform(self):
-			print 'reward delivered @ %f'%self.exe.tk.diff()
+			self.exe.event_happen('Reward from valve %d'%(self.valve))
 		
 		def set_prop(self,name,val):
 			if name=="valve":
@@ -37,25 +37,23 @@ class Mickey(aedsdk.Paradigm):
 			pass
 		
 		def perform(self):
+			#self.exe.event_happen('Restart trial')
 			self.exe.new_trial()
-			print 'restart trial @ %f'%self.exe.tk.diff()
 	
 	class Wait(aedsdk.Interval):   
 		def __init__(self,  duration=0.0):
 			aedsdk.Interval.__init__(self, duration)
 			
 		def on_LeverPress(self):
-			print 'lever pressed'
 			for act in self.events_LeverPress:
 				act.perform()
 		
 		def at_begin(self):
 			aedsdk.Interval.at_begin(self)
-			print 'wait start @ %f'%self.exe.tk.diff()
+			self.exe.interval_happen('Begin Wait')
 			
 		def at_end(self):
 			aedsdk.Interval.at_end(self)
-			print 'wait end @ %f'%self.exe.tk.diff()
 		
 		def meanwhile(self):
 			if self.a_LeverPress.detect():
@@ -67,11 +65,10 @@ class Mickey(aedsdk.Paradigm):
 		
 		def at_begin(self):
 			aedsdk.Interval.at_begin(self)
-			print 'tone play start @ %f'%self.exe.tk.diff()
+			self.exe.interval_happen('Begin Tone')
 		
 		def at_end(self):
 			aedsdk.Interval.at_end(self)
-			print 'tone play end @ %f'%self.exe.tk.diff()
 			
 		def meanwhile(self): pass
 	
@@ -81,14 +78,13 @@ class Mickey(aedsdk.Paradigm):
 		
 		def at_begin(self):
 			aedsdk.Interval.at_begin(self)
-			print 'reward chance start @ %f'%self.exe.tk.diff()
+			self.exe.interval_happen('Begin Present')
 		
 		def at_end(self):
-			aedsdk.Interval.at_end(self)
-			print 'reward chance end @ %f'%self.exe.tk.diff()		
+			aedsdk.Interval.at_end(self)		
 		
 		def on_LeverPress(self):
-			print 'give reward :) @ %f'%self.exe.tk.diff()
+			self.exe.action_happen('Lever Pressed on Present interval')
 			for act in self.events_LeverPress:
 				act.perform()
 				
@@ -104,13 +100,13 @@ class Mickey(aedsdk.Paradigm):
 		def at_end(self):
 			if self.reward:
 				aedsdk.Interval.at_end(self)
-				print 'reward given  @ %f'%self.exe.tk.diff()
+				self.exe.event_happen('Reward from valve %d at the end of a Refrain interval'%(self.valve))
 			else:
-				print 'reward not given  @ %f'%self.exe.tk.diff()
+				pass
 		
 		def on_LeverPress(self):
 			self.reward = False
-			print 'oops pressed lever no reward at the end :(  @ %f'%self.exe.tk.diff()
+			self.exe.action_happen('Lever Pressed on Refrain interval')
 			for act in self.events_LeverPress:
 				act.perform()
 				

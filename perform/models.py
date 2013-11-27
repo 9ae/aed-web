@@ -8,6 +8,16 @@ class Experiment(models.Model):
     total_duration = models.DecimalField(max_digits=8, decimal_places=3,null=True, blank=True)
     name = models.CharField(max_length=255)
     protocol = models.ForeignKey(Protocol)
+    #cache = models.OneToOneField(ExperimentCache)
+
+    def set_trials_completed(self):
+        self.trials_completed = Trial.objects.filter(experiment=self,completed=True).count()
+    
+    def current_trial(self):
+        try:
+            return Trial.objects.filter(experiment=self,completed=False).order_by('-time_start')[0]
+        except IndexError:
+            return None
 
 class Trial(models.Model):
     experiment = models.ForeignKey(Experiment)
@@ -19,4 +29,11 @@ class Happening(models.Model):
     trial = models.ForeignKey(Trial)
     trial_time_occurred = models.DecimalField(max_digits=8, decimal_places=3)
     type = models.CharField(max_length=3, choices=(('ACT','Action Occurred'),('EVT','Event Occurred'),('ITL','Interval Start'),('TRL','Trial Start')) )
-    description = models.TextField()
+    description = models.TextField(default='',blank=True)
+    broadcast = models.BooleanField(default=False)
+    write_on = models.DateTimeField(auto_now=True)
+'''    
+class ExperimentCache(models.Model):
+    experiment = models.OneToOneField(Experiment)
+    terminate = models.BooleanField(default=False)
+'''

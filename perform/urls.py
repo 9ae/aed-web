@@ -3,5 +3,7 @@ import views
 
 urlpatterns = patterns('',
 	url(r'^$', views.index, name='index'),
-	url(r'^load/$', views.load_experiment),
+	url(r'^experiment/start$', views.load_experiment),
+	url(r'^experiment/(?P<eid>\d+)$', views.get_experiment),
+	url(r'^experiment/(?P<eid>\d+)/stop$', views.stop_experiment),
 )
