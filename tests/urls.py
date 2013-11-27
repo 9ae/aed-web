@@ -7,4 +7,5 @@ urlpatterns = patterns('',
 	url(r'^ring$',views.ring,name='ring'),
 	url(r'^run_triad$',views.run_triad),
 	url(r'^check_triad$',views.check_triad),
+	url(r'^cache$',views.test_cache),
 )

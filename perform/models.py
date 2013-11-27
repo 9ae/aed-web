@@ -32,8 +32,7 @@ class Happening(models.Model):
     description = models.TextField(default='',blank=True)
     broadcast = models.BooleanField(default=False)
     write_on = models.DateTimeField(auto_now=True)
-'''    
-class ExperimentCache(models.Model):
-    experiment = models.OneToOneField(Experiment)
-    terminate = models.BooleanField(default=False)
-'''
+    
+class RuntimeCache(models.Model):
+    experiment_current = models.OneToOneField(Experiment,null=True,blank=True)
+    experiment_terminate = models.BooleanField(default=False)

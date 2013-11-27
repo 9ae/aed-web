@@ -4,6 +4,8 @@ Created on Nov 23, 2013
 @author: alice
 '''
 import json
+from django.core.cache import cache
+
 def import_mod_file(filename):
 	import os
 	import sys
@@ -17,6 +19,16 @@ def import_mod_file(filename):
 	finally:
 		sys.path[:] = path # restore
 	return module
+
+def poke_cache(key,fun,secs=180):
+	val = cache.get(key)
+	if val==None:
+		val = fun()
+		cache.set(key,val,secs)
+		print 'get from function'
+	else:
+		print 'get from cache'
+	return val
 
 class Medea(object):
 	def __init__(self):

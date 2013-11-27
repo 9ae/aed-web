@@ -5,9 +5,10 @@ from django.template import RequestContext, loader
 from django.shortcuts import render
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.cache import cache
 from edit.models import Protocol, Paradigm
 from models import Experiment
-from helpers import Medea
+from helpers import Medea, poke_cache
 import json
 from boss import setup_experiement
 
@@ -40,16 +41,23 @@ def load_experiment(request):
 
 def get_experiment(request,eid='bad'):
 	m = Medea()
-	exp_id=None
+	exp_id=None	
 	try:
 		exp_id = int(eid)
 	except ValueError:
 		m.addError('unable to parse id')
+	def find_experiment():
+		experiment = None
+		if exp_id!=None:
+			try:
+				experiment = Experiment.objects.get(id=exp_id)
+			except ObjectDoesNotExist:
+				m.addError('experiment not found')
+		return experiment
+	
 	if exp_id!=None:
-		try:
-			experiment = Experiment.objects.get(id=exp_id)
-		except ObjectDoesNotExist:
-			m.addError('experiment not found')
+		cache_key = 'experiment.%d'%exp_id
+		experiment = poke_cache(cache_key,find_experiment)
 	
 	if m.noErrors():
 		response_str = serializers.serialize("json",[experiment])

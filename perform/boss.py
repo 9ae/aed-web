@@ -3,7 +3,7 @@ Created on Nov 26, 2013
 
 @author: ari
 '''
-from models import Experiment, Trial, Happening
+from models import Experiment, Trial, Happening, RuntimeCache
 import edit.models as em
 import aedsdk
 from helpers import import_mod_file
@@ -11,6 +11,7 @@ from exe import Executioner
 from decimal import Decimal
 import janus
 import writers as w
+from helpers import poke_cache
 
 class Dictator(object):
     executioner = None
@@ -20,6 +21,22 @@ class Dictator(object):
     def __init__(self,protocol,nickname):
         self.experiment = Experiment(name=nickname,protocol=protocol)
         self.executioner = Executioner() 
+    
+    def current_trial(self):
+        return poke_cache('current_trial',self.experiment.current_trial,secs=60)
+    
+    @staticmethod
+    def clear_db_cache():
+        RuntimeCache.objects.all().delete()
+    
+    @staticmethod
+    def init_db_cache(experiment):
+        from django.core.cache import cache
+        runcache = RuntimeCache(experiment_current=experiment,experiment_terminate=False)
+        runcache.save()
+        cache.set('current_experiment',experiment)
+        cache.set('experiment_terminate',False)
+        
     
     def start(self):
         self.tk = janus.Timekeeper(3)
