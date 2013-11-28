@@ -36,3 +36,4 @@ class Happening(models.Model):
 class RuntimeCache(models.Model):
     experiment_current = models.OneToOneField(Experiment,null=True,blank=True)
     experiment_terminate = models.BooleanField(default=False)
+    happening_ids = models.TextField(blank=True,default='')
