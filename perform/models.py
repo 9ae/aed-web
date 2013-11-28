@@ -27,7 +27,7 @@ class Trial(models.Model):
 
 class Happening(models.Model):
     trial = models.ForeignKey(Trial)
-    trial_time_occurred = models.DecimalField(max_digits=8, decimal_places=3)
+    time_occurred = models.DecimalField(max_digits=8, decimal_places=3)
     type = models.CharField(max_length=3, choices=(('ACT','Action Occurred'),('EVT','Event Occurred'),('ITL','Interval Start'),('TRL','Trial Start')) )
     description = models.TextField(default='',blank=True)
     broadcast = models.BooleanField(default=False)

@@ -8,6 +8,7 @@ import janus
 
 from threading import Thread
 from decimal import Decimal
+import libarian
 
 class Executioner(Thread):
 	def __init__(self):
@@ -29,8 +30,8 @@ class Executioner(Thread):
 		while not(self.stop_flag):
 			self.loop()
 			#just for testing
-			if self.trials_count() > 3:
-				self.axe.stop()
+			if libarian.get_experiment_terminate():
+				self.stop_flag = True
 		#finished
 		self.axe.complete()
 		print 'experiment end'

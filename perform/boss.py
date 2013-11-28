@@ -12,6 +12,7 @@ from decimal import Decimal
 import janus
 import writers as w
 from helpers import poke_cache
+import libarian
 
 class Dictator(object):
     executioner = None
@@ -25,27 +26,13 @@ class Dictator(object):
     def current_trial(self):
         return poke_cache('current_trial',self.experiment.current_trial,secs=60)
     
-    @staticmethod
-    def clear_db_cache():
-        RuntimeCache.objects.all().delete()
-    
-    @staticmethod
-    def init_db_cache(experiment):
-        from django.core.cache import cache
-        runcache = RuntimeCache(experiment_current=experiment,experiment_terminate=False)
-        runcache.save()
-        cache.set('current_experiment',experiment)
-        cache.set('experiment_terminate',False)
-        
-    
     def start(self):
         self.tk = janus.Timekeeper(3)
         self.experiment.save()
         self.executioner.set_timekeeper(self.tk)
+        libarian.clear_db_cache()
+        libarian.init_db_cache(self.experiment)
         self.executioner.start()
-    
-    def stop(self):
-        self.executioner.stop_flag = True
     
     def complete(self):
         current_trial = self.experiment.current_trial()
@@ -55,32 +42,35 @@ class Dictator(object):
         self.experiment.total_duration = self.tk.diff()
         self.experiment.set_trials_completed()
         self.experiment.save()
+        libarian.clear_db_cache()
 
     def new_trial(self):
-        thready = w.NextTrialThread(self.experiment,self.tk.trial_diff())
+        trial_time = self.tk.trial_diff()
+        total_time = self.tk.diff()
+        old_trial = libarian.get_trial_current()
+        new_trial = Trial(experiment=self.experiment, duration=Decimal(0.0),completed=False)
+        new_trial.save()
+        thready = w.NextTrialThread(old_trial,new_trial,trial_time,total_time)
         thready.start()
+        libarian.set_trial_current(new_trial)
         self.tk.new_trial()
         self.executioner.interval_pointer = 0
         self.executioner.is_new_trial = True
     
     def action_happen(self,description):
-        trial_time = self.tk.trial_diff()
-        current_trial = self.experiment.current_trial()
-        thready = w.NewHappening(current_trial,'ACT',description,trial_time)
+        time = self.tk.diff()
+        thready = w.NewHappening('ACT',description,time)
         thready.start()
         
     def event_happen(self,description):
-        trial_time = self.tk.trial_diff()
-        current_trial = self.experiment.current_trial()
-        thready = w.NewHappening(current_trial,'EVT',description,trial_time)
+        time = self.tk.diff()
+        thready = w.NewHappening('EVT',description,time)
         thready.start()
         
     def interval_happen(self,description):
-        trial_time = self.tk.trial_diff()
-        current_trial = self.experiment.current_trial()
-        if current_trial!=None:
-            thready = w.NewHappening(current_trial,'ITL',description,trial_time)
-            thready.start()
+        time = self.tk.diff()
+        thready = w.NewHappening('ITL',description,time)
+        thready.start()
 
 def setup_experiement(db_protocol):
     loading_error = False

@@ -20,14 +20,11 @@ def import_mod_file(filename):
 		sys.path[:] = path # restore
 	return module
 
-def poke_cache(key,fun,secs=180):
+def poke_cache(key,fun,secs=60):
 	val = cache.get(key)
 	if val==None:
 		val = fun()
 		cache.set(key,val,secs)
-		print 'get from function'
-	else:
-		print 'get from cache'
 	return val
 
 class Medea(object):
