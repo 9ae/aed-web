@@ -48,21 +48,31 @@ def set_trial_current(trial):
 
 def get_happenings():
     def from_db():
-        rtc = RuntimeCache.objects.latest('id')
-        return rtc.happeing_ids
+        if RuntimeCache.objects.count()>0:
+            rtc = RuntimeCache.objects.latest('id')
+            return rtc.happening_ids
+        else:
+            return ''
     return poke_cache('happening_ids',from_db,secs=30)
+
+def clear_happenings():
+    rtc = RuntimeCache.objects.latest('id')
+    rtc.happening_ids = ''
+    rtc.save()
+    cache.set('happening_ids','',40)
 
 def cache_happening(happening):
     happening_ids = get_happenings()
     
     # add to haps list
     if happening_ids=='':
-        happening_ids = happening.id
+        happening_ids = str(happening.id)
     else:
-        happening_ids = happening_ids + ','+happening.id
+        happening_ids = happening_ids+','+str(happening.id)
     
     # make happening serialized
-    happening_str = serializers.serialize(happening)
+    happening_str = serializers.serialize('json',[happening])
+    happening_str = happening_str.strip('[]')
     hap_key = 'H.'+str(happening.id)
     
     #place list to rtc
@@ -76,7 +86,11 @@ def cache_happening(happening):
     
 def get_happening_by_id(hap_id):
     hap_key = 'H.'+str(hap_id)
-    def serialized_from_db():
+    hap_str = cache.get(hap_key)
+    if hap_str:
         hap = Happening.objects.get(id=hap_id)
-        return serializers.serialize(hap)
-    return poke_cache(hap_key,serialized_from_db,60)
+        hap_str = serializers.serialize('json',[hap])
+        hap_str = hap_str.strip('[]')
+    else:
+        cache.delete(hap_key)
+    return hap_str

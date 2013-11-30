@@ -25,6 +25,7 @@ class NextTrialThread(Thread):
             current_trial.save()
         hap = Happening(trial=self.new_trial, time_occurred=self.total_time, type='TRL', description='New Trial')
         hap.save()
+        libarian.cache_happening(hap)
 
 class NewHappening(Thread):
     def __init__(self,htype,descript,time):
@@ -41,3 +42,14 @@ class NewHappening(Thread):
             hap = Happening(trial=self.trial, time_occurred=self.time, type=self.type, description=self.desription)
             hap.save()
             print '%s @ %f'%(self.desription,self.time)
+            libarian.cache_happening(hap)
+
+class MarkHappening(Thread):
+    def __init__(self,hap_id):
+        Thread.__init__(self)
+        self.hap_id=hap_id
+    
+    def run(self):
+        hap = Happening.objects.get(id=self.hap_id)
+        hap.broadcast = True
+        hap.save()

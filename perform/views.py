@@ -8,6 +8,7 @@ from django.shortcuts import render
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.cache import cache
+from django.views.decorators.cache import never_cache
 
 # my django models
 from edit.models import Protocol, Paradigm
@@ -15,6 +16,7 @@ from models import Experiment
 
 # my modules
 from helpers import Medea, poke_cache
+from writers import MarkHappening
 import libarian
 import boss
 
@@ -72,7 +74,43 @@ def get_experiment(request,eid='bad'):
 	return HttpResponse(response_str, content_type="application/json")
 
 def stop_experiment(request):
+	happs_str = libarian.get_happenings()
+	if happs_str=='':
+		happs_serial = '[]'
+	else:
+		happs_serial = json_happenings(happs_str)
 	experiment =  libarian.get_experiment_current()
 	libarian.set_experiment_terminate() 
-	response_str = serializers.serialize("json",[experiment])
+	exp_str = serializers.serialize('json',[experiment])
+	response_str = '{"experiment":'+exp_str+',"happenings":'+happs_serial+'}'
 	return HttpResponse(response_str, content_type="application/json")
+
+def json_happenings(happs_str):
+	happs_list = happs_str.split(',') 
+	happs_list = map(int,happs_list)
+	
+	#for each happening get its serialized version
+	serialized_list = []
+	
+	for hap_id in happs_list:
+		#get hap clear its cache
+		hap_str = libarian.get_happening_by_id(hap_id)
+		serialized_list.append(hap_str)
+		#send to flag as written
+		MarkHappening(hap_id).start()
+	# update db and cache with empty string
+	libarian.clear_happenings()
+	list_str = ','.join(serialized_list)
+	list_str = '['+list_str+']'
+	return list_str
+
+def happenings(request):
+	happs_str = libarian.get_happenings()
+	if happs_str=='':
+		response_str = '{"has_happenings":false}'
+		return HttpResponse(response_str, content_type="application/json")
+	else:
+		#get list of happenings
+		list_str = json_happenings(happs_str)
+		response_str = '{"happenings":'+list_str+',"has_happenings":true}'
+		return HttpResponse(response_str, content_type="application/json")
