@@ -15,7 +15,7 @@ from edit.models import Protocol, Paradigm
 from models import Experiment
 
 # my modules
-from helpers import Medea, poke_cache
+from helpers import Medea, poke_cache, cereal
 from writers import MarkHappening
 import libarian
 import boss
@@ -39,7 +39,7 @@ def load_experiment(request):
 	if m.noErrors():
 		db_exp = boss.setup_experiement(protocol)
 		if db_exp!=None:
-			response_str = serializers.serialize("json", [db_exp])
+			response_str = cereal(db_exp)
 		else:
 			m.addError('failed to import '+protocol.paradigm.name)
 			response_str = m.serialize()
@@ -68,7 +68,7 @@ def get_experiment(request,eid='bad'):
 		experiment = poke_cache(cache_key,find_experiment)
 	
 	if m.noErrors():
-		response_str = serializers.serialize("json",[experiment])
+		response_str = cereal(experiment)
 	else:
 		response_str = m.serialize()
 	return HttpResponse(response_str, content_type="application/json")
@@ -81,7 +81,7 @@ def stop_experiment(request):
 		happs_serial = json_happenings(happs_str)
 	experiment =  libarian.get_experiment_current()
 	libarian.set_experiment_terminate() 
-	exp_str = serializers.serialize('json',[experiment])
+	exp_str = cereal(experiment)
 	response_str = '{"experiment":'+exp_str+',"happenings":'+happs_serial+'}'
 	return HttpResponse(response_str, content_type="application/json")
 

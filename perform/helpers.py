@@ -5,6 +5,7 @@ Created on Nov 23, 2013
 '''
 import json
 from django.core.cache import cache
+from django.core import serializers
 
 def import_mod_file(filename):
 	import os
@@ -26,6 +27,10 @@ def poke_cache(key,fun,secs=60):
 		val = fun()
 		cache.set(key,val,secs)
 	return val
+
+def cereal(model_obj):
+	s = serializers.serialize("json", [model_obj])
+	return s.strip('[]')
 
 class Medea(object):
 	def __init__(self):
