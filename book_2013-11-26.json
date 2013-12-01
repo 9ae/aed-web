@@ -15,15 +15,15 @@
 		"model": "edit.paradigm",
 		"fields": {
 			"file_location": "/Users/ari/slytherin/aed-web/paradigms/Mickey.py",
-			"created_on": "2013-11-25T03:20:57.697Z",
+			"created_on": "2013-11-25T03:20:57.697",
 			"name": "Mickey"
 		}
 	}, {
 		"pk": 1,
 		"model": "edit.protocol",
 		"fields": {
-			"modified_on": "2013-11-25T03:21:16.175Z",
-			"created_on": "2013-11-25T03:21:16.175Z",
+			"modified_on": "2013-11-25T03:21:16.175",
+			"created_on": "2013-11-25T03:21:16.175",
 			"paradigm": 1,
 			"name": "Simple Test",
 			"trial_duration": "10"

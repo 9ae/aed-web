@@ -18,11 +18,9 @@ class NextTrialThread(Thread):
         self.trial_time = trial_time
     
     def run(self):
-        current_trial = libarian.get_trial_current()
-        if current_trial!=None:
-            current_trial.completed=True
-            current_trial.duration = self.trial_time
-            current_trial.save()
+        self.old_trial.completed=True
+        self.old_trial.duration = self.trial_time
+        self.old_trial.save()
         hap = Happening(trial=self.new_trial, time_occurred=self.total_time, type='TRL', description='New Trial')
         hap.save()
         libarian.cache_happening(hap)

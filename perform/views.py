@@ -16,7 +16,7 @@ from models import Experiment
 
 # my modules
 from helpers import Medea, poke_cache, cereal
-from writers import MarkHappening
+from writers import MarkHappening, NewHappening
 import libarian
 import boss
 
@@ -79,10 +79,8 @@ def stop_experiment(request):
 		happs_serial = '[]'
 	else:
 		happs_serial = json_happenings(happs_str)
-	experiment =  libarian.get_experiment_current()
 	libarian.set_experiment_terminate() 
-	exp_str = cereal(experiment)
-	response_str = '{"experiment":'+exp_str+',"happenings":'+happs_serial+'}'
+	response_str = '{"happenings":'+happs_serial+'}'
 	return HttpResponse(response_str, content_type="application/json")
 
 def json_happenings(happs_str):
@@ -107,10 +105,15 @@ def json_happenings(happs_str):
 def happenings(request):
 	happs_str = libarian.get_happenings()
 	if happs_str=='':
-		response_str = '{"has_happenings":false}'
+		response_str = '{"happenings":[]}'
 		return HttpResponse(response_str, content_type="application/json")
 	else:
 		#get list of happenings
 		list_str = json_happenings(happs_str)
-		response_str = '{"happenings":'+list_str+',"has_happenings":true}'
+		response_str = '{"happenings":'+list_str+'}'
 		return HttpResponse(response_str, content_type="application/json")
+
+def mark(request):
+	exp_time = libarian.time_since_exp()
+	NewHappening('MRK','Mark Point',exp_time).start()
+	return HttpResponse('{"ok":true}', content_type="application/json")

@@ -7,4 +7,5 @@ urlpatterns = patterns('',
 	url(r'^experiment/stop$', views.stop_experiment),
 	url(r'^experiment/(?P<eid>\d+)$', views.get_experiment),
 	url(r'^happenings$', views.happenings),
+	url(r'^mark$',views.mark),
 )

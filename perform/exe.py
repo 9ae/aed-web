@@ -5,7 +5,7 @@ Created on Sep 28, 2013
 '''
 
 import janus
-
+from datetime import datetime
 from threading import Thread
 from decimal import Decimal
 import libarian
@@ -35,21 +35,18 @@ class Executioner(Thread):
 		#finished
 		self.axe.complete()
 		print 'experiment end'
-	
-
-	def trials_count(self):
-		return len(self.tk.timelog)
 
 	def loop(self):
 		# check time       
-		trial_time = self.tk.trial_diff()
+		#trial_time = libarian.time_since_trial()
+		int_time = libarian.time_since_interval()
 		current_interval = self.intervals[self.interval_pointer]
 	
 		if self.is_new_trial:
 			current_interval.at_begin()
 			self.is_new_trial = False
 
-		if trial_time > current_interval.duration:
+		if int_time > current_interval.duration:
 			# go to next interval
 			current_interval.at_end()
 			self.interval_pointer = self.interval_pointer + 1
@@ -59,6 +56,7 @@ class Executioner(Thread):
 				return
 			# start new interval
 			next_interval = self.intervals[self.interval_pointer]
+			libarian.set_interval_start(datetime.now())
 			next_interval.at_begin()
 			next_interval.meanwhile()
 		else:

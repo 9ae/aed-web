@@ -3,15 +3,18 @@ Created on Nov 28, 2013
 
 @author: ari
 '''
+from datetime import datetime
+from decimal import Decimal
+
 from models import RuntimeCache, Happening
 from django.core import serializers
 from django.core.cache import cache
+from helpers import millisec
 
 from helpers import poke_cache
 def clear_db_cache():
     RuntimeCache.objects.all().delete()
     cache.clear()
-
 
 def init_db_cache(experiment):
     runcache = RuntimeCache(experiment_current=experiment,experiment_terminate=False)
@@ -94,3 +97,50 @@ def get_happening_by_id(hap_id):
     else:
         cache.delete(hap_key)
     return hap_str
+
+def time_start_exp():
+    def from_db():
+        rtc = RuntimeCache.objects.latest('id')
+        #print 'exp start=%s'%rtc.experiment_current.time_start
+        return rtc.experiment_current.time_start
+    return poke_cache('time_start_exp',from_db,secs=1800)
+
+def time_start_trial():
+    def from_db():
+        rtc = RuntimeCache.objects.latest('id')
+        exp = rtc.experiment_current
+        trial = exp.current_trial()
+        if trial==None:
+            #print 'trial undefined finding experiment time'
+            return time_start_exp()
+        else:
+            #print 'trial start=%s'%trial.time_start
+            return trial.time_start
+    return poke_cache('time_start_trial',from_db,secs=100)
+
+def time_since_exp():
+    exp_start = time_start_exp()
+    diff = datetime.now() - exp_start
+    return millisec(diff)
+
+def time_since_trial():
+    trial_start = time_start_trial()
+    diff = datetime.now() - trial_start
+    return millisec(diff)
+
+def time_since_interval():
+    def from_db():
+        rtc = RuntimeCache.objects.latest('id')
+        return rtc.interval_start
+    int_start = poke_cache('interval_start',from_db,secs=30)
+    if int_start==None:
+        return Decimal(0.000)
+    else:
+        diff = datetime.now() - int_start
+        return millisec(diff)
+
+def set_interval_start(dt):
+    cache.set('interval_start',dt,30)
+    rtc = RuntimeCache.objects.latest('id')
+    rtc.interval_start = dt
+    rtc.save()
