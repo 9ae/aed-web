@@ -24,11 +24,11 @@ def index(request):
 	context = {'paradigm_name':'Mickey'}
 	return render(request,'index.html',context)
 
-def load_experiment(request):
+def load_experiment(request,protocol):
 	m = Medea()
 	protocol_id=None
 	try:
-		protocol_id = int(request.GET['protocol'])
+		protocol_id = int(protocol)
 	except ValueError:
 		m.addError('unable to parse protocol id')
 	if protocol_id!=None:
@@ -47,11 +47,11 @@ def load_experiment(request):
 		response_str = m.serialize()
 	return HttpResponse(response_str, content_type="application/json")
 
-def get_experiment(request,eid='bad'):
+def get_experiment(request,experiment):
 	m = Medea()
 	exp_id=None	
 	try:
-		exp_id = int(eid)
+		exp_id = int(experiment)
 	except ValueError:
 		m.addError('unable to parse id')
 	def find_experiment():
@@ -73,11 +73,11 @@ def get_experiment(request,eid='bad'):
 		response_str = m.serialize()
 	return HttpResponse(response_str, content_type="application/json")
 
-def stop_experiment(request):
+def stop_experiment(request,experiment):
 	m = Medea()
 	experiment_id=None
 	try:
-		experiment_id = int(request.GET['experiment'])
+		experiment_id = int(experiment)
 	except ValueError:
 		m.addError('unable to parse protocol id')
 	if m.noErrors():
@@ -112,8 +112,8 @@ def json_happenings(happs_str,exp_id):
 	list_str = '['+list_str+']'
 	return list_str
 
-def happenings(request):
-	experiment_id = int(request.GET['experiment'])
+def happenings(request,experiment):
+	experiment_id = int(experiment)
 	happs_str = libarian.get_happenings(experiment_id)
 	if happs_str=='':
 		response_str = '{"happenings":[]}'
@@ -124,8 +124,8 @@ def happenings(request):
 		response_str = '{"happenings":'+list_str+'}'
 		return HttpResponse(response_str, content_type="application/json")
 
-def mark(request):
-	experiment_id = int(request.GET['experiment'])
+def mark(request,experiment):
+	experiment_id = int(experiment)
 	exp_time = libarian.time_since_exp(experiment_id)
 	NewHappening('MRK','Mark Point',exp_time,experiment_id).start()
 	return HttpResponse('{"ok":true}', content_type="application/json")

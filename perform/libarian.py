@@ -65,7 +65,7 @@ def clear_happenings(exp_id):
     rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)[0]
     rtc.happening_ids = ''
     rtc.save()
-    cache.set('happening_ids','',40)
+    cache.set(str(exp_id)+'.happening_ids','',40)
 
 def cache_happening(happening,exp_id):
     happening_ids = get_happenings(exp_id)

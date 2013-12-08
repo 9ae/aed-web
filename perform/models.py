@@ -1,5 +1,5 @@
 from django.db import models
-from edit.models import Protocol
+from edit.models import Protocol, Action
 
 class Experiment(models.Model):
     time_start = models.DateTimeField()
@@ -37,4 +37,10 @@ class RuntimeCache(models.Model):
     experiment_terminate = models.BooleanField(default=False)
     happening_ids = models.TextField(blank=True,default='')
     interval_start = models.DateTimeField(null=True, blank=True)
+    
+class EmulateAction(models.Model):
+    experiment = models.ForeignKey(Experiment)
+    time_occurred = models.DecimalField(max_digits=8, decimal_places=3,null=True, blank=True)
+    action = models.ForeignKey(Action)
+    
     

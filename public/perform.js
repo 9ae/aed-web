@@ -10,7 +10,7 @@ function startExperiment(){
 		alert('protocol id is undefined');
 	}
 	else {
-		var url="/perform/experiment/start?protocol="+sysvars.protocol_id;
+		var url="/perform/protocol/"+sysvars.protocol_id+"/experiment/start";
 		$.get(url).done(function(data){
 			sysvars['experiment_id'] = data.pk;
 			var exp_name = data.fields.name;
@@ -22,7 +22,7 @@ function startExperiment(){
 
 function stopExperiment(){
 	clearInterval(sysvars['haps_check']);
-	var url = "/perform/experiment/stop?experiment="+sysvars.experiment_id;
+	var url = "/perform/experiment/"+sysvars.experiment_id+"/stop";
 	$.get(url).done(function(data){
 		logHappenings(data.happenings);
 		kendoConsole.error('- Stop Experiment -');
@@ -42,14 +42,14 @@ function logHappenings(haps){
 }
 
 function checkHappenings(){
-	var url = '/perform/happenings?experiment='+sysvars.experiment_id;
+	var url = '/perform/experiment/'+sysvars.experiment_id+"/happenings";
 	$.get(url).done(function(data){
 		logHappenings(data.happenings);
 	});
 }
 
 function markTime(){
-	var url = '/perform/mark?experiment='+sysvars.experiment_id;
+	var url = '/perform/experiment/'+sysvars.experiment_id+"/mark";
 	$.get(url);
 }
 
