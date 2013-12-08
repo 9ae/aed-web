@@ -26,14 +26,12 @@ class Dictator(object):
     def __init__(self,protocol,nickname):
         dt = datetime.now()
         self.experiment = Experiment(name=nickname,protocol=protocol,time_start=dt)
-        self.executioner = Executioner() 
         self.experiment.save()
-        cache.set('time_start_exp',self.experiment.time_start,1800)
-        libarian.clear_db_cache()
+        self.executioner = Executioner() 
         libarian.init_db_cache(self.experiment)
     
     def current_trial(self):
-        return poke_cache('trial_current',self.experiment.current_trial(),secs=60)
+        return poke_cache(str(self.experiment.id)+'.trial_current',self.experiment.current_trial(),secs=60)
     
     def start(self):
         self.executioner.start()
@@ -41,45 +39,45 @@ class Dictator(object):
     def complete(self):
         current_trial = self.experiment.current_trial()
         if current_trial!=None:
-            current_trial.duration = libarian.time_since_trial()
+            current_trial.duration = libarian.time_since_trial(self.experiment.id)
             current_trial.save()
-        self.experiment.total_duration = libarian.time_since_exp()
+        self.experiment.total_duration = libarian.time_since_exp(self.experiment.id)
         self.experiment.set_trials_completed()
         self.experiment.time_complete = datetime.now()
         self.experiment.save()
-        libarian.clear_db_cache()
+        # libarian.clear_db_cache()
 
     def new_trial(self):
-        total_time = libarian.time_since_exp()
-        trial_time = libarian.time_since_trial()
+        total_time = libarian.time_since_exp(self.experiment.id)
+        trial_time = libarian.time_since_trial(self.experiment.id)
         new_trial = Trial(experiment=self.experiment, duration=Decimal(0.0),completed=False,time_start=datetime.now())
         new_trial.save()
-        old_trial = libarian.get_trial_current()
+        old_trial = libarian.get_trial_current(self.experiment.id)
         if old_trial!=None:
             thready = w.NextTrialThread(old_trial,new_trial,trial_time,total_time)
             thready.start()
         else:
             hap = Happening(trial=new_trial, time_occurred=total_time, type='TRL', description='New Trial')
             hap.save()
-            libarian.cache_happening(hap)
-        libarian.set_trial_current(new_trial)
+            libarian.cache_happening(hap,self.experiment.id)
+        libarian.set_trial_current(new_trial,self.experiment.id)
         self.executioner.interval_pointer = 0
         self.executioner.is_new_trial = True
-        libarian.set_interval_start(datetime.now())
+        libarian.set_interval_start(datetime.now(),self.experiment.id)
     
     def action_happen(self,description):
-        time = libarian.time_since_exp()
-        thready = w.NewHappening('ACT',description,time)
+        time = libarian.time_since_exp(self.experiment.id)
+        thready = w.NewHappening('ACT',description,time,self.experiment.id)
         thready.start()
         
     def event_happen(self,description):
-        time = libarian.time_since_exp()
-        thready = w.NewHappening('EVT',description,time)
+        time = libarian.time_since_exp(self.experiment.id)
+        thready = w.NewHappening('EVT',description,time,self.experiment.id)
         thready.start()
         
     def interval_happen(self,description):
-        time = libarian.time_since_exp()
-        thready = w.NewHappening('ITL',description,time)
+        time = libarian.time_since_exp(self.experiment.id)
+        thready = w.NewHappening('ITL',description,time,self.experiment.id)
         thready.start()
 
 def setup_experiement(db_protocol):

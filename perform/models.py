@@ -33,7 +33,7 @@ class Happening(models.Model):
     write_on = models.DateTimeField(auto_now=True)
     
 class RuntimeCache(models.Model):
-    experiment_current = models.OneToOneField(Experiment,null=True,blank=True)
+    experiment = models.OneToOneField(Experiment,null=True,blank=True)
     experiment_terminate = models.BooleanField(default=False)
     happening_ids = models.TextField(blank=True,default='')
     interval_start = models.DateTimeField(null=True, blank=True)
