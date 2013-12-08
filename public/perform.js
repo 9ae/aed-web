@@ -21,7 +21,7 @@ function startExperiment(){
 
 function stopExperiment(){
 	clearInterval(sysvars['haps_check']);
-	var url = "/perform/experiment/stop";
+	var url = "/perform/experiment/stop?experiment="+sysvars.experiment_id;
 	$.get(url).done(function(data){
 		logHappenings(data.happenings);
 		kendoConsole.error('- Stop Experiment -');
@@ -41,14 +41,14 @@ function logHappenings(haps){
 }
 
 function checkHappenings(){
-	var url = '/perform/happenings';
+	var url = '/perform/happenings?experiment='+sysvars.experiment_id;
 	$.get(url).done(function(data){
 		logHappenings(data.happenings);
 	});
 }
 
 function markTime(){
-	var url = '/perform/mark';
+	var url = '/perform/mark?experiment='+sysvars.experiment_id;
 	$.get(url);
 }
 

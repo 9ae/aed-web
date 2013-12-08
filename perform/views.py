@@ -74,14 +74,24 @@ def get_experiment(request,eid='bad'):
 	return HttpResponse(response_str, content_type="application/json")
 
 def stop_experiment(request):
-	happs_str = libarian.get_happenings()
-	if happs_str=='':
-		happs_serial = '[]'
+	m = Medea()
+	experiment_id=None
+	try:
+		experiment_id = int(request.GET['experiment'])
+	except ValueError:
+		m.addError('unable to parse protocol id')
+	if m.noErrors():
+		happs_str = libarian.get_happenings(experiment_id)
+		if happs_str=='':
+			happs_serial = '[]'
+		else:
+			happs_serial = json_happenings(happs_str)
+		libarian.set_experiment_terminate(experiment_id) 
+		response_str = '{"happenings":'+happs_serial+'}'
+		return HttpResponse(response_str, content_type="application/json")
 	else:
-		happs_serial = json_happenings(happs_str)
-	libarian.set_experiment_terminate() 
-	response_str = '{"happenings":'+happs_serial+'}'
-	return HttpResponse(response_str, content_type="application/json")
+		return HttpResponse(m.serialize(), content_type="application/json")
+		
 
 def json_happenings(happs_str):
 	happs_list = happs_str.split(',') 
@@ -103,7 +113,8 @@ def json_happenings(happs_str):
 	return list_str
 
 def happenings(request):
-	happs_str = libarian.get_happenings()
+	experiment_id = int(request.GET['experiment'])
+	happs_str = libarian.get_happenings(experiment_id)
 	if happs_str=='':
 		response_str = '{"happenings":[]}'
 		return HttpResponse(response_str, content_type="application/json")
@@ -114,6 +125,7 @@ def happenings(request):
 		return HttpResponse(response_str, content_type="application/json")
 
 def mark(request):
-	exp_time = libarian.time_since_exp()
+	experiment_id = int(request.GET['experiment'])
+	exp_time = libarian.time_since_exp(experiment_id)
 	NewHappening('MRK','Mark Point',exp_time).start()
 	return HttpResponse('{"ok":true}', content_type="application/json")

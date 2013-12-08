@@ -30,16 +30,16 @@ def get_experiment_current():
         return rtc.experiment_current
     return poke_cache('experiment_current',from_db,secs=600)
 
-def get_experiment_terminate():
+def get_experiment_terminate(experiment_id):
     def from_db():
-        rtc = RuntimeCache.objects.latest('id')
+        rtc = RuntimeCache.objects.filter(experiment_current_id_exact=experiment_id)
         return rtc.experiment_terminate
-    return poke_cache('experiment_terminate',from_db,secs=600)
+    return poke_cache(str(experiment_id)+'.experiment_terminate',from_db,secs=600)
 
 
-def set_experiment_terminate():
-    rtc = RuntimeCache.objects.latest('id')
-    cache.set('experiment_terminate',True,60)
+def set_experiment_terminate(experiment_id):
+    rtc = RuntimeCache.objects.filter(experiment_current_id_exact=experiment_id)
+    cache.set(str(experiment_id)+'.experiment_terminate',True,60)
     rtc.experiment_terminate = True
     rtc.save()
 
@@ -49,14 +49,14 @@ def get_trial_current():
 def set_trial_current(trial):
     cache.set('trial_current',trial,60)
 
-def get_happenings():
+def get_happenings(experiment_id):
     def from_db():
         if RuntimeCache.objects.count()>0:
-            rtc = RuntimeCache.objects.latest('id')
+            rtc = RuntimeCache.objects.filter(experiment_current_id_exact=experiment_id)
             return rtc.happening_ids
         else:
             return ''
-    return poke_cache('happening_ids',from_db,secs=30)
+    return poke_cache(str(experiment_id)+'.happening_ids',from_db,secs=30)
 
 def clear_happenings():
     rtc = RuntimeCache.objects.latest('id')
@@ -98,12 +98,12 @@ def get_happening_by_id(hap_id):
         cache.delete(hap_key)
     return hap_str
 
-def time_start_exp():
+def time_start_exp(experiment_id):
     def from_db():
-        rtc = RuntimeCache.objects.latest('id')
+        rtc = RuntimeCache.objects.filter(experiment_current_id_exact=experiment_id)
         #print 'exp start=%s'%rtc.experiment_current.time_start
         return rtc.experiment_current.time_start
-    return poke_cache('time_start_exp',from_db,secs=1800)
+    return poke_cache(str(experiment_id)+'.time_start_exp',from_db,secs=1800)
 
 def time_start_trial():
     def from_db():
@@ -118,8 +118,8 @@ def time_start_trial():
             return trial.time_start
     return poke_cache('time_start_trial',from_db,secs=100)
 
-def time_since_exp():
-    exp_start = time_start_exp()
+def time_since_exp(experiment_id):
+    exp_start = time_start_exp(experiment_id)
     diff = datetime.now() - exp_start
     return millisec(diff)
 
