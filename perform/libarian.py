@@ -24,24 +24,25 @@ def init_db_cache(experiment):
     runcache.save()
     cache.set(str(experiment.id)+'.experiment',experiment)
     cache.set(str(experiment.id)+'.experiment_terminate',False)
+    cache.set(str(experiment.id)+'.time_start_exp',experiment.time_start,1800)
 
 
 def get_experiment_current(exp_id):
     def from_db():
         # since there is only one entry in the db, we can just always get the latest
-        rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)
+        rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)[0]
         return rtc.experiment
     return poke_cache(str(exp_id)+'.experiment_current',from_db,secs=600)
 
 def get_experiment_terminate(exp_id):
     def from_db():
-        rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)
+        rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)[0]
         return rtc.experiment_terminate
     return poke_cache(str(exp_id)+'.experiment_terminate',from_db,secs=600)
 
 
 def set_experiment_terminate(exp_id):
-    rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)
+    rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)[0]
     cache.set(str(exp_id)+'.experiment_terminate',True,60)
     rtc.experiment_terminate = True
     rtc.save()
@@ -55,14 +56,14 @@ def set_trial_current(trial,exp_id):
 def get_happenings(exp_id):
     def from_db():
         if RuntimeCache.objects.count()>0:
-            rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)
+            rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)[0]
             return rtc.happening_ids
         else:
             return ''
     return poke_cache(str(exp_id)+'.happening_ids',from_db,secs=30)
 
 def clear_happenings(exp_id):
-    rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)
+    rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)[0]
     rtc.happening_ids = ''
     rtc.save()
     cache.set('happening_ids','',40)
@@ -82,7 +83,7 @@ def cache_happening(happening,exp_id):
     hap_key = str(exp_id)+'.H.'+str(happening.id)
     
     #place list to rtc
-    rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)
+    rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)[0]
     rtc.happeing_ids = happening_ids
     rtc.save()
     
@@ -103,19 +104,19 @@ def get_happening_by_id(hap_id,exp_id):
 
 def time_start_exp(exp_id):
     def from_db():
-        rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)
+        rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)[0]
         #print 'exp start=%s'%rtc.experiment_current.time_start
         return rtc.experiment_current.time_start
     return poke_cache(str(exp_id)+'.time_start_exp',from_db,secs=1800)
 
 def time_start_trial(exp_id):
     def from_db():
-        rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)
+        rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)[0]
         exp = rtc.experiment
         trial = exp.current_trial()
         if trial==None:
             #print 'trial undefined finding experiment time'
-            return time_start_exp()
+            return time_start_exp(exp_id)
         else:
             #print 'trial start=%s'%trial.time_start
             return trial.time_start
@@ -133,7 +134,7 @@ def time_since_trial(exp_id):
 
 def time_since_interval(exp_id):
     def from_db():
-        rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)
+        rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)[0]
         return rtc.interval_start
     int_start = poke_cache(str(exp_id)+'.interval_start',from_db,secs=30)
     if int_start==None:
@@ -144,6 +145,6 @@ def time_since_interval(exp_id):
 
 def set_interval_start(dt,exp_id):
     cache.set(str(exp_id)+'.interval_start',dt,30)
-    rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)
+    rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)[0]
     rtc.interval_start = dt
     rtc.save()

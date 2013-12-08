@@ -26,9 +26,8 @@ class Dictator(object):
     def __init__(self,protocol,nickname):
         dt = datetime.now()
         self.experiment = Experiment(name=nickname,protocol=protocol,time_start=dt)
-        self.executioner = Executioner() 
         self.experiment.save()
-        cache.set(str(self.experiment.id)+'.time_start_exp',self.experiment.time_start,1800)
+        self.executioner = Executioner() 
         libarian.init_db_cache(self.experiment)
     
     def current_trial(self):

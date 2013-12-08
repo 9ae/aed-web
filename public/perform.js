@@ -15,6 +15,7 @@ function startExperiment(){
 			sysvars['experiment_id'] = data.pk;
 			var exp_name = data.fields.name;
 			$('#div_experiment_name i').text(exp_name);
+			sysvars['haps_check'] = setInterval(checkHappenings,1000);
 		});
 	}
 }
@@ -61,7 +62,6 @@ window.onload = function(){
 	$('#btn_start').click(startExperiment);
 	$('#btn_stop').click(stopExperiment);
 	$('#btn_mark').click(markTime);
-	sysvars['haps_check'] = setInterval(checkHappenings,1000);
 };
 
 // add stuff to page console: kendoConsole.log(str);

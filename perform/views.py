@@ -85,7 +85,7 @@ def stop_experiment(request):
 		if happs_str=='':
 			happs_serial = '[]'
 		else:
-			happs_serial = json_happenings(happs_str)
+			happs_serial = json_happenings(happs_str,experiment_id)
 		libarian.set_experiment_terminate(experiment_id) 
 		response_str = '{"happenings":'+happs_serial+'}'
 		return HttpResponse(response_str, content_type="application/json")
@@ -102,7 +102,7 @@ def json_happenings(happs_str,exp_id):
 	
 	for hap_id in happs_list:
 		#get hap clear its cache
-		hap_str = libarian.get_happening_by_id(hap_id)
+		hap_str = libarian.get_happening_by_id(hap_id,exp_id)
 		serialized_list.append(hap_str)
 		#send to flag as written
 		MarkHappening(hap_id).start()
