@@ -26,7 +26,6 @@ def init_db_cache(experiment):
     cache.set(str(experiment.id)+'.experiment_terminate',False)
     cache.set(str(experiment.id)+'.time_start_exp',experiment.time_start,1800)
 
-
 def get_experiment_current(exp_id):
     def from_db():
         # since there is only one entry in the db, we can just always get the latest
