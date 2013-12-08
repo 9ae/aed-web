@@ -13,10 +13,7 @@ class Mickey(aedsdk.Paradigm):
 			pass
 		
 		def detect(self):
-			if random.randint(1,1e4)==3:
-				return True
-			else:
-				return False
+			return self.exe.check_emulate_action('LeverPress')
 	
 	class Reward(aedsdk.Event):
 		def __init__(self):
@@ -84,7 +81,7 @@ class Mickey(aedsdk.Paradigm):
 			aedsdk.Interval.at_end(self)		
 		
 		def on_LeverPress(self):
-			self.exe.action_happen('Lever Pressed on Present interval')
+			#self.exe.action_happen('Lever Pressed on Present interval')
 			for act in self.events_LeverPress:
 				act.perform()
 				
@@ -106,7 +103,7 @@ class Mickey(aedsdk.Paradigm):
 		
 		def on_LeverPress(self):
 			self.reward = False
-			self.exe.action_happen('Lever Pressed on Refrain interval')
+			#self.exe.action_happen('Lever Pressed on Refrain interval')
 			for act in self.events_LeverPress:
 				act.perform()
 				

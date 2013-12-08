@@ -73,6 +73,8 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     '/Users/ari/slytherin/aed-web/public',
+    '/Users/ari/slytherin/aed-web/perform/public',
+    '/Users/ari/slytherin/aed-web/edit/public',
 )
 
 # List of finder classes that know how to find static files in

@@ -1,4 +1,4 @@
-var sysvars ={'protocol_id':1}
+var sysvars ={'protocol_id':1, 'paradigm_id':1}
 
 function cssExpandHeightUntilEnd(selector){
 	var element = $(selector);
@@ -53,6 +53,32 @@ function markTime(){
 	$.get(url);
 }
 
+function makeActionEmu(id,type){
+	return function(){
+		console.log(type+" emulated");
+		return false;
+	};
+}
+
+function generateActionButtons(){
+	
+	var url = '/edit/paradigm/'+sysvars.paradigm_id+'/actions';
+	$.get(url,function(data){
+		var len = data.length;
+		for(var i=0; i<len; i++){
+			var act = data[0];
+			var act_id = act.pk;
+			var act_type = act.fields.type;
+			var btn = $('<button class="k-button">'+act_type+'</button>');
+			$('#div_acts').append(btn);
+			var onclick = makeActionEmu(act_id,act_type);
+			btn.click(onclick);
+			/* do something with props if it has any */
+		}
+	
+	});
+}
+
 window.onload = function(){
 	cssExpandHeightUntilEnd('.leftside');
 	cssExpandHeightUntilEnd('.console');
@@ -62,6 +88,7 @@ window.onload = function(){
 	$('#btn_start').click(startExperiment);
 	$('#btn_stop').click(stopExperiment);
 	$('#btn_mark').click(markTime);
+	generateActionButtons();
 };
 
 // add stuff to page console: kendoConsole.log(str);

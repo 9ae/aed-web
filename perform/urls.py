@@ -8,4 +8,5 @@ urlpatterns = patterns('',
 	url(r'^experiment/(?P<experiment>\d+)$', views.get_experiment),
 	url(r'^experiment/(?P<experiment>\d+)/happenings$', views.happenings),
 	url(r'^experiment/(?P<experiment>\d+)/mark$',views.mark),
+	url(r'^experiment/(?P<experiment>\d+)/emulate$', views.emulate),
 )

@@ -9,6 +9,7 @@ from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.cache import cache
 from django.views.decorators.cache import never_cache
+from django.views.decorators.csrf import csrf_exempt
 
 # my django models
 from edit.models import Protocol, Paradigm
@@ -128,4 +129,11 @@ def mark(request,experiment):
 	experiment_id = int(experiment)
 	exp_time = libarian.time_since_exp(experiment_id)
 	NewHappening('MRK','Mark Point',exp_time,experiment_id).start()
+	return HttpResponse('{"ok":true}', content_type="application/json")
+
+@csrf_exempt
+def emulate(request,experiment):
+	experiment_id = int(experiment)
+	action_id = request.POST['action_id'];
+	print type(action_id)
 	return HttpResponse('{"ok":true}', content_type="application/json")

@@ -65,8 +65,21 @@ class Dictator(object):
         self.executioner.is_new_trial = True
         libarian.set_interval_start(datetime.now(),self.experiment.id)
     
-    def action_happen(self,description):
-        time = libarian.time_since_exp(self.experiment.id)
+    def check_emulate_action(self,action_type):
+        if em.Action.objects.filter(experiment=self.experiment, type=action_type).count()==1:
+            action = em.Action.objects.filter(experiment=self.experiment, type=action_type).latest()
+            self.action_happen('Lever Pressed',action.time_occurred)
+            action.delete()
+            return True
+        else:
+            return False
+        
+    
+    def action_happen(self,description,given_time=None):
+        if given_time==None:
+            time = libarian.time_since_exp(self.experiment.id)
+        else:
+            time = given_time
         thready = w.NewHappening('ACT',description,time,self.experiment.id)
         thready.start()
         
