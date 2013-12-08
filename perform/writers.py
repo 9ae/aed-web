@@ -26,9 +26,9 @@ class NextTrialThread(Thread):
         libarian.cache_happening(hap)
 
 class NewHappening(Thread):
-    def __init__(self,htype,descript,time):
+    def __init__(self,htype,descript,time,exp_id):
         Thread.__init__(self)
-        self.trial=libarian.get_trial_current()
+        self.trial=libarian.get_trial_current(exp_id)
         self.type=htype
         self.desription=descript
         self.time=time
