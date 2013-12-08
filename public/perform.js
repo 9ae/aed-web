@@ -15,13 +15,14 @@ function startExperiment(){
 			sysvars['experiment_id'] = data.pk;
 			var exp_name = data.fields.name;
 			$('#div_experiment_name i').text(exp_name);
+			sysvars['haps_check'] = setInterval(checkHappenings,1000);
 		});
 	}
 }
 
 function stopExperiment(){
 	clearInterval(sysvars['haps_check']);
-	var url = "/perform/experiment/stop";
+	var url = "/perform/experiment/stop?experiment="+sysvars.experiment_id;
 	$.get(url).done(function(data){
 		logHappenings(data.happenings);
 		kendoConsole.error('- Stop Experiment -');
@@ -41,14 +42,14 @@ function logHappenings(haps){
 }
 
 function checkHappenings(){
-	var url = '/perform/happenings';
+	var url = '/perform/happenings?experiment='+sysvars.experiment_id;
 	$.get(url).done(function(data){
 		logHappenings(data.happenings);
 	});
 }
 
 function markTime(){
-	var url = '/perform/mark';
+	var url = '/perform/mark?experiment='+sysvars.experiment_id;
 	$.get(url);
 }
 
@@ -61,7 +62,6 @@ window.onload = function(){
 	$('#btn_start').click(startExperiment);
 	$('#btn_stop').click(stopExperiment);
 	$('#btn_mark').click(markTime);
-	sysvars['haps_check'] = setInterval(checkHappenings,1000);
 };
 
 // add stuff to page console: kendoConsole.log(str);

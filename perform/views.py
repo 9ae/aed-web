@@ -74,16 +74,26 @@ def get_experiment(request,eid='bad'):
 	return HttpResponse(response_str, content_type="application/json")
 
 def stop_experiment(request):
-	happs_str = libarian.get_happenings()
-	if happs_str=='':
-		happs_serial = '[]'
+	m = Medea()
+	experiment_id=None
+	try:
+		experiment_id = int(request.GET['experiment'])
+	except ValueError:
+		m.addError('unable to parse protocol id')
+	if m.noErrors():
+		happs_str = libarian.get_happenings(experiment_id)
+		if happs_str=='':
+			happs_serial = '[]'
+		else:
+			happs_serial = json_happenings(happs_str,experiment_id)
+		libarian.set_experiment_terminate(experiment_id) 
+		response_str = '{"happenings":'+happs_serial+'}'
+		return HttpResponse(response_str, content_type="application/json")
 	else:
-		happs_serial = json_happenings(happs_str)
-	libarian.set_experiment_terminate() 
-	response_str = '{"happenings":'+happs_serial+'}'
-	return HttpResponse(response_str, content_type="application/json")
+		return HttpResponse(m.serialize(), content_type="application/json")
+		
 
-def json_happenings(happs_str):
+def json_happenings(happs_str,exp_id):
 	happs_list = happs_str.split(',') 
 	happs_list = map(int,happs_list)
 	
@@ -92,28 +102,30 @@ def json_happenings(happs_str):
 	
 	for hap_id in happs_list:
 		#get hap clear its cache
-		hap_str = libarian.get_happening_by_id(hap_id)
+		hap_str = libarian.get_happening_by_id(hap_id,exp_id)
 		serialized_list.append(hap_str)
 		#send to flag as written
 		MarkHappening(hap_id).start()
 	# update db and cache with empty string
-	libarian.clear_happenings()
+	libarian.clear_happenings(exp_id)
 	list_str = ','.join(serialized_list)
 	list_str = '['+list_str+']'
 	return list_str
 
 def happenings(request):
-	happs_str = libarian.get_happenings()
+	experiment_id = int(request.GET['experiment'])
+	happs_str = libarian.get_happenings(experiment_id)
 	if happs_str=='':
 		response_str = '{"happenings":[]}'
 		return HttpResponse(response_str, content_type="application/json")
 	else:
 		#get list of happenings
-		list_str = json_happenings(happs_str)
+		list_str = json_happenings(happs_str,experiment_id)
 		response_str = '{"happenings":'+list_str+'}'
 		return HttpResponse(response_str, content_type="application/json")
 
 def mark(request):
-	exp_time = libarian.time_since_exp()
-	NewHappening('MRK','Mark Point',exp_time).start()
+	experiment_id = int(request.GET['experiment'])
+	exp_time = libarian.time_since_exp(experiment_id)
+	NewHappening('MRK','Mark Point',exp_time,experiment_id).start()
 	return HttpResponse('{"ok":true}', content_type="application/json")

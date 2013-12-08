@@ -8,3 +8,4 @@ import models
 admin.site.register(models.Experiment)
 admin.site.register(models.Trial)
 admin.site.register(models.Happening)
+admin.site.register(models.RuntimeCache)
