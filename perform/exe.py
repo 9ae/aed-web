@@ -30,7 +30,7 @@ class Executioner(Thread):
 		while not(self.stop_flag):
 			self.loop()
 			#just for testing
-			if libarian.get_experiment_terminate():
+			if libarian.get_experiment_terminate(self.axe.experiment.id):
 				self.stop_flag = True
 		#finished
 		self.axe.complete()
@@ -38,8 +38,7 @@ class Executioner(Thread):
 
 	def loop(self):
 		# check time       
-		#trial_time = libarian.time_since_trial()
-		int_time = libarian.time_since_interval()
+		int_time = libarian.time_since_interval(self.axe.experiment.id)
 		current_interval = self.intervals[self.interval_pointer]
 	
 		if self.is_new_trial:
@@ -56,7 +55,7 @@ class Executioner(Thread):
 				return
 			# start new interval
 			next_interval = self.intervals[self.interval_pointer]
-			libarian.set_interval_start(datetime.now())
+			libarian.set_interval_start(datetime.now(),self.axe.experiment.id)
 			next_interval.at_begin()
 			next_interval.meanwhile()
 		else:

@@ -93,7 +93,7 @@ def stop_experiment(request):
 		return HttpResponse(m.serialize(), content_type="application/json")
 		
 
-def json_happenings(happs_str):
+def json_happenings(happs_str,exp_id):
 	happs_list = happs_str.split(',') 
 	happs_list = map(int,happs_list)
 	
@@ -107,7 +107,7 @@ def json_happenings(happs_str):
 		#send to flag as written
 		MarkHappening(hap_id).start()
 	# update db and cache with empty string
-	libarian.clear_happenings()
+	libarian.clear_happenings(exp_id)
 	list_str = ','.join(serialized_list)
 	list_str = '['+list_str+']'
 	return list_str
@@ -120,12 +120,12 @@ def happenings(request):
 		return HttpResponse(response_str, content_type="application/json")
 	else:
 		#get list of happenings
-		list_str = json_happenings(happs_str)
+		list_str = json_happenings(happs_str,experiment_id)
 		response_str = '{"happenings":'+list_str+'}'
 		return HttpResponse(response_str, content_type="application/json")
 
 def mark(request):
 	experiment_id = int(request.GET['experiment'])
 	exp_time = libarian.time_since_exp(experiment_id)
-	NewHappening('MRK','Mark Point',exp_time).start()
+	NewHappening('MRK','Mark Point',exp_time,experiment_id).start()
 	return HttpResponse('{"ok":true}', content_type="application/json")
