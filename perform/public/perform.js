@@ -55,7 +55,12 @@ function markTime(){
 
 function makeActionEmu(id,type){
 	return function(){
-		console.log(type+" emulated");
+		if(sysvars.experiment_id!==undefined){
+			$.post('/perform/experiment/'+sysvars.experiment_id+'/emulate',
+				{'action_id':id});
+		} else {
+			alert('experiment not yet started');
+		}
 		return false;
 	};
 }

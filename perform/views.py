@@ -12,8 +12,8 @@ from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 
 # my django models
-from edit.models import Protocol, Paradigm
-from models import Experiment
+from edit.models import Protocol, Paradigm, Action
+from models import Experiment, EmulateAction
 
 # my modules
 from helpers import Medea, poke_cache, cereal
@@ -134,6 +134,10 @@ def mark(request,experiment):
 @csrf_exempt
 def emulate(request,experiment):
 	experiment_id = int(experiment)
-	action_id = request.POST['action_id'];
-	print type(action_id)
+	action_id = int(request.POST['action_id']);
+	exp = Experiment.objects.get(id=experiment_id)
+	act = Action.objects.get(id=action_id)
+	exp_time = libarian.time_since_exp(experiment_id)
+	ea = EmulateAction(experiment=exp,time_occurred=exp_time,action=act)
+	ea.save()
 	return HttpResponse('{"ok":true}', content_type="application/json")

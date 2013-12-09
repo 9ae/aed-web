@@ -7,9 +7,10 @@ Created on Nov 26, 2013
 from decimal import Decimal
 from datetime import datetime
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.cache import cache
 
-from models import Experiment, Trial, Happening, RuntimeCache
+from models import Experiment, Trial, Happening, RuntimeCache, EmulateAction
 import edit.models as em
 
 import aedsdk
@@ -66,11 +67,15 @@ class Dictator(object):
         libarian.set_interval_start(datetime.now(),self.experiment.id)
     
     def check_emulate_action(self,action_type):
-        if em.Action.objects.filter(experiment=self.experiment, type=action_type).count()==1:
-            action = em.Action.objects.filter(experiment=self.experiment, type=action_type).latest()
-            self.action_happen('Lever Pressed',action.time_occurred)
-            action.delete()
-            return True
+        if em.Action.objects.filter(type=action_type).count()==1:
+            act = em.Action.objects.filter(type=action_type)[0]
+            try:
+                ea =  EmulateAction.objects.filter(experiment=self.experiment, action=act).latest('id')
+                self.action_happen('Lever Pressed',ea.time_occurred)
+                ea.delete()
+                return True
+            except ObjectDoesNotExist:
+                return False
         else:
             return False
         
@@ -110,6 +115,13 @@ def setup_experiement(db_protocol):
     paradigm.set_executioner(axe)
     exe.trial_duration = db_protocol.trial_duration
     actions = db_paradigm.actions()
+    
+    # set exe for actions
+    '''
+    for a in actions:
+        ac = paradigm.instantiate_name(a.type)
+        ac.set_executioner(axe)
+    '''
     
     #now start loading events
     events = db_protocol.events()
