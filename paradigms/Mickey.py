@@ -19,8 +19,8 @@ class Mickey(aedsdk.Paradigm):
 		def __init__(self):
 			self.valve = 0
 
-		def perform(self):
-			self.exe.event_happen('Reward from valve %d'%(self.valve))
+		def perform(self,time=None):
+			self.exe.event_happen('Reward from valve %d'%(self.valve),given_time=time)
 		
 		def set_prop(self,name,val):
 			if name=="valve":
@@ -33,7 +33,7 @@ class Mickey(aedsdk.Paradigm):
 		def __init__(self):
 			pass
 		
-		def perform(self):
+		def perform(self,time=None):
 			#self.exe.event_happen('Restart trial')
 			self.exe.new_trial()
 	

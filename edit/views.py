@@ -18,4 +18,9 @@ def actions_list(request,paradigm_id):
 	actions = models.Action.objects.filter(paradigm_id__exact=pid)
 	s = serializers.serialize("json", actions)
 	return HttpResponse(s, content_type="application/json")
-	
+
+def events_list(request,protocol_id):
+	pid = int(protocol_id)
+	events = models.Event.objects.filter(protocol_id__exact=pid)
+	s = serializers.serialize("json", events)
+	return HttpResponse(s, content_type="application/json")	

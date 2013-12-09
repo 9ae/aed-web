@@ -10,7 +10,7 @@ from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.cache import cache
 
-from models import Experiment, Trial, Happening, RuntimeCache, EmulateAction
+from models import Experiment, Trial, Happening, RuntimeCache, EmulateAction, SimEvent
 import edit.models as em
 
 import aedsdk
@@ -23,6 +23,7 @@ import libarian
 class Dictator(object):
     executioner = None
     experiment = None
+    eventObjects = None
     
     def __init__(self,protocol,nickname):
         dt = datetime.now()
@@ -78,7 +79,12 @@ class Dictator(object):
                 return False
         else:
             return False
-        
+    
+    def run_simulate_events(self):
+        event_ids = SimEvent.objects.filter(experiment=self.experiment)
+        for se in event_ids:
+            self.eventObjects[se.eventid].perform(time=se.time_occurred)
+        event_ids.delete()    
     
     def action_happen(self,description,given_time=None):
         if given_time==None:
@@ -88,8 +94,11 @@ class Dictator(object):
         thready = w.NewHappening('ACT',description,time,self.experiment.id)
         thready.start()
         
-    def event_happen(self,description):
-        time = libarian.time_since_exp(self.experiment.id)
+    def event_happen(self,description,given_time=None):
+        if given_time==None:
+            time = libarian.time_since_exp(self.experiment.id)
+        else:
+            time = given_time
         thready = w.NewHappening('EVT',description,time,self.experiment.id)
         thready.start()
         
@@ -116,13 +125,6 @@ def setup_experiement(db_protocol):
     exe.trial_duration = db_protocol.trial_duration
     actions = db_paradigm.actions()
     
-    # set exe for actions
-    '''
-    for a in actions:
-        ac = paradigm.instantiate_name(a.type)
-        ac.set_executioner(axe)
-    '''
-    
     #now start loading events
     events = db_protocol.events()
     mapEvents = {}
@@ -135,6 +137,7 @@ def setup_experiement(db_protocol):
         for prop in eprops:
             ev.set_prop(prop.prop_name, prop.val())
         mapEvents[e.id] = ev
+    axe.eventObjects = mapEvents
     
     # load intervals
     intervals = db_protocol.intervals()

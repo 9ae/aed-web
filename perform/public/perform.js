@@ -53,7 +53,7 @@ function markTime(){
 	$.get(url);
 }
 
-function makeActionEmu(id,type){
+function makeActionEmu(id){
 	return function(){
 		if(sysvars.experiment_id!==undefined){
 			$.post('/perform/experiment/'+sysvars.experiment_id+'/emulate',
@@ -71,17 +71,46 @@ function generateActionButtons(){
 	$.get(url,function(data){
 		var len = data.length;
 		for(var i=0; i<len; i++){
-			var act = data[0];
+			var act = data[i];
 			var act_id = act.pk;
 			var act_type = act.fields.type;
 			var btn = $('<button class="k-button">'+act_type+'</button>');
 			$('#div_acts').append(btn);
-			var onclick = makeActionEmu(act_id,act_type);
+			var onclick = makeActionEmu(act_id);
 			btn.click(onclick);
 			/* do something with props if it has any */
 		}
 	
 	});
+}
+
+function makeEventSim(id){
+	return function(){
+		if(sysvars.experiment_id!==undefined){
+			$.post('/perform/experiment/'+sysvars.experiment_id+'/simulate',
+				{'event_id':id});
+		} else {
+			alert('experiment not yet started');
+		}
+		return false;
+	};
+}
+
+function generateEventButtons(){
+	var url = '/edit/protocol/'+sysvars.protocol_id+'/events';
+	$.get(url,function(data){
+		var len = data.length;
+		for(var i=0; i<len; i++){
+			var evt = data[i];
+			var evt_id = evt.pk;
+			var evt_name = evt.fields.name;
+			var btn = $('<button class="k-button">'+evt_name+'</button>');
+			$('#div_evts').append(btn);
+			var onclick = makeEventSim(evt_id);
+			btn.click(onclick);
+		}
+	});
+	
 }
 
 window.onload = function(){
@@ -94,6 +123,7 @@ window.onload = function(){
 	$('#btn_stop').click(stopExperiment);
 	$('#btn_mark').click(markTime);
 	generateActionButtons();
+	generateEventButtons();
 };
 
 // add stuff to page console: kendoConsole.log(str);

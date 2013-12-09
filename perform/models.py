@@ -1,5 +1,5 @@
 from django.db import models
-from edit.models import Protocol, Action
+from edit.models import Protocol, Action, Event
 
 class Experiment(models.Model):
     time_start = models.DateTimeField()
@@ -43,4 +43,7 @@ class EmulateAction(models.Model):
     time_occurred = models.DecimalField(max_digits=8, decimal_places=3,null=True, blank=True)
     action = models.ForeignKey(Action)
     
-    
+class SimEvent(models.Model):
+    experiment = models.ForeignKey(Experiment)
+    time_occurred = models.DecimalField(max_digits=8, decimal_places=3,null=True, blank=True)
+    eventid = models.IntegerField(default=0)    

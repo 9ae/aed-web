@@ -60,3 +60,5 @@ class Executioner(Thread):
 			next_interval.meanwhile()
 		else:
 			current_interval.meanwhile()
+		
+		self.axe.run_simulate_events()

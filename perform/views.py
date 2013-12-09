@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 # my django models
 from edit.models import Protocol, Paradigm, Action
-from models import Experiment, EmulateAction
+from models import Experiment, EmulateAction, SimEvent
 
 # my modules
 from helpers import Medea, poke_cache, cereal
@@ -140,4 +140,14 @@ def emulate(request,experiment):
 	exp_time = libarian.time_since_exp(experiment_id)
 	ea = EmulateAction(experiment=exp,time_occurred=exp_time,action=act)
 	ea.save()
+	return HttpResponse('{"ok":true}', content_type="application/json")
+
+@csrf_exempt
+def simulate(request,experiment):
+	experiment_id = int(experiment)
+	event_id = int(request.POST['event_id']);
+	exp = Experiment.objects.get(id=experiment_id)
+	exp_time = libarian.time_since_exp(experiment_id)
+	se = SimEvent(experiment=exp,time_occurred=exp_time,eventid=event_id)
+	se.save()
 	return HttpResponse('{"ok":true}', content_type="application/json")
