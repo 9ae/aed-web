@@ -113,6 +113,27 @@ function generateEventButtons(){
 	
 }
 
+function openIntervalsEditor(){
+	var url = '/edit/protocol/'+sysvars.protocol_id+'/intervals/view';
+	var win = $("#kWindow").data("kendoWindow");
+	if(win!=undefined){
+		win.center();
+		win.open();
+	} else { 
+		$("#kWindow").kendoWindow({
+			actions: ['Close'],
+			content:url,
+	  		modal: true,
+	  		title:'Intervals',
+	  		position: {top:20, left:100},
+	  		visible:false
+		});
+		win = $("#kWindow").data("kendoWindow");
+	//	win.center();
+		win.open();
+	}
+}
+
 window.onload = function(){
 	cssExpandHeightUntilEnd('.leftside');
 	cssExpandHeightUntilEnd('.console');

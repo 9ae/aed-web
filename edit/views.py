@@ -23,4 +23,11 @@ def events_list(request,protocol_id):
 	pid = int(protocol_id)
 	events = models.Event.objects.filter(protocol_id__exact=pid)
 	s = serializers.serialize("json", events)
-	return HttpResponse(s, content_type="application/json")	
+	return HttpResponse(s, content_type="application/json")
+
+def intervals_listview(request,protocol_id):
+	pid = int(protocol_id)
+	protocol = models.Protocol.objects.get(id=pid)
+	intervals = protocol.intervals()
+	content = {'intervals':intervals}
+	return render(request,'intervals.html',content)

@@ -9,6 +9,9 @@
 <script src="/static/js/kendo.core.min.js"></script>
 <script src="/static/js/kendo.menu.min.js"></script>
 <script src="/static/js/kendo.popup.min.js"></script>
+<script src="/static/js/kendo.userevents.min.js"></script>
+<script src="/static/js/kendo.draganddrop.min.js"></script>
+<script src="/static/js/kendo.window.min.js"></script>
 <script src="/static/js/console.js"></script>
 <script type="text/javascript" src="/static/perform.js"></script>
 <title>Aed ~ Perform {{ paradigm_name }} Experiment</title>
@@ -24,8 +27,11 @@
 					<li>Print Experiment</li>
 				</ul>
 		</li>			
-		<li>Intervals
-			<ul id="list_intervals">
+		<li>Edit
+			<ul>
+				<li>Actions</li>
+				<li onclick="openIntervalsEditor()">Intervals</li>
+				<li>Events</li>
 			</ul>
 		</li>
 		<li>Graph</li>
@@ -64,5 +70,7 @@
 		</div>
 	</div>
 </div>
+
+<div class="k-content"><div id="kWindow"></div></div>
 </body>
 </html>

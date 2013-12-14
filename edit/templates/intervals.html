@@ -1,0 +1,39 @@
+<style type="text/css">
+	.interval_block {
+		margin-left:10px;
+	}
+	
+	.props_block{
+		margin-left:10px;	
+	}
+	
+</style>
+<form id="intervals_preset">
+	{% for ival in intervals %}
+		<strong>[{{ ival.type}}] {{ ival.name }}</strong> <br />
+		<div class="interval_block">
+		<label for="iduration_{{ival.id}}">Duration:</label>
+			<input type="text" name="iduration_{{ival.id}}" value="{{ival.duration}}"/> <br />
+		Properties: <br />
+		<div class="props_block">
+		{% for iprop in ival.props.all %}
+			<label for="iprop_{{iprop.prop_name}}">{{ iprop.prop_name }}</label>
+			{% if iprop.prop_type == "INT" %}
+			<input type="text" name="iduration_{{ iprop.prop_name }}" value="{{ iprop.prop_val_int }}" placeholder="0" /> 
+			{% elif iprop.prop_type == "DEC" %}
+			<input type="text" name="iduration_{{ iprop.prop_name }}" value="{{ iprop.prop_val_dec }}" placeholder="0.0" /> 
+			{% elif iprop.prop_type == "BOO" %}
+			<input type="checkbox" name="iduration_{{ iprop.prop_name }}" {% if iprop.prop_val_boo %} checked="checked" {% endif %} >
+			{% else %}
+			<input type="text" name="iduration_{{ iprop.prop_name }}" value="{{ iprop.prop_val_str }}"/> 
+			{% endif %}
+			<br />	
+		{% endfor %}
+		</div>
+		</div>
+			
+		<br />
+	{% endfor %}
+	
+	<button class="k-button">Save</button>
+</form>
