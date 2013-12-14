@@ -39,7 +39,10 @@ def load_experiment(request,protocol):
 		except ObjectDoesNotExist:
 			m.addError('protocol not found')
 	if m.noErrors():
-		db_exp = boss.setup_experiement(protocol)
+		ivals = None
+		if request.POST['change']:
+			ivals = json.loads(request.POST['data'])
+		db_exp = boss.setup_experiement(protocol,ivals)
 		if db_exp!=None:
 			response_str = cereal(db_exp)
 		else:

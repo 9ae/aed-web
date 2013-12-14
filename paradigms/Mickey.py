@@ -10,7 +10,7 @@ class Mickey(aedsdk.Paradigm):
 	
 	@staticmethod	
 	def varyInterval(interval):
-		if interval.varyby!=0.0:
+		if interval.varyby>0.0 or interval.varyby<0.0:
 			varyhalf = interval.varyby*0.5
 			interval.duration = interval.oridur + random.uniform(-1.0*varyhalf, varyhalf)
 	
@@ -48,6 +48,10 @@ class Mickey(aedsdk.Paradigm):
 			aedsdk.Interval.__init__(self, duration)
 			self.varyby = 0.0
 			self.oridur = self.duration
+		
+		def init_duration(self,value):
+			self.oridur = value
+			self.duration = value
 			
 		def on_LeverPress(self):
 			for act in self.events_LeverPress:
@@ -75,6 +79,10 @@ class Mickey(aedsdk.Paradigm):
 			self.varyby = 0.0
 			self.oridur = self.duration
 		
+		def init_duration(self,value):
+			self.oridur = value
+			self.duration = value
+		
 		def at_begin(self):
 			Mickey.varyInterval(self)
 			aedsdk.Interval.at_begin(self)
@@ -94,6 +102,10 @@ class Mickey(aedsdk.Paradigm):
 			aedsdk.Interval.__init__(self, duration)
 			self.varyby = 0.0
 			self.oridur = self.duration
+		
+		def init_duration(self,value):
+			self.oridur = value
+			self.duration = value
 		
 		def at_begin(self):
 			Mickey.varyInterval(self)

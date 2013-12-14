@@ -107,7 +107,7 @@ class Dictator(object):
         thready = w.NewHappening('ITL',description,time,self.experiment.id)
         thready.start()
 
-def setup_experiement(db_protocol):
+def setup_experiement(db_protocol,delta_ivals):
     loading_error = False
     db_paradigm = db_protocol.paradigm
     parad = import_mod_file(db_paradigm.file_location)
@@ -139,17 +139,29 @@ def setup_experiement(db_protocol):
         mapEvents[e.id] = ev
     axe.eventObjects = mapEvents
     
+    update_interval = delta_ivals!=None
+    
     # load intervals
     intervals = db_protocol.intervals()
     for i in intervals:
         it = paradigm.instantiate_name(i.type)
         it.set_executioner(axe)
         it.name = i.name
-        it.duration = i.duration
-        iprops = i.props.all()
-        # set properties
-        for prop in iprops:
-            it.set_prop(prop.prop_name,prop.val())
+        if update_interval:
+            imap = delta_ivals[str(i.id)]
+            it.init_duration(imap['duration'])
+            props_count = len(imap['props'])
+            ip = 0
+            while ip<props_count:
+                iprop = imap['props'][ip]
+                it.set_prop(iprop['prop_name'],iprop['prop_val'])
+                ip = ip + 1
+        else:
+            it.init_duration(i.duration)
+            iprops = i.props.all()
+            # set properties
+            for prop in iprops:
+                it.set_prop(prop.prop_name,prop.val())
         # set begin events
         for b in i.beginEvents():
             try:
