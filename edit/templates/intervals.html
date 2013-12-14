@@ -1,3 +1,22 @@
+<script type="text/javascript">
+function editIntervals(){
+	var form = $('#intervals_preset');
+	var result = {};
+	form.find('.interval_block').each(function(){
+		var ivaljson = {};
+		var id = $(this).find('input[name="interval_id"]').first().val();
+		ivaljson['duration'] = $(this).find('input[name="iduration_'+id+'"]').first().val();
+		ivaljson['props'] = $.map($(this).find('div.props_block > input[name^="iprop_"]'),function(n){
+		var name= $(n).attr('name').replace('iprop_','');
+		var type = $(n).attr('data-type');
+		var val = $(n).val();
+		return {'prop_name':name, 'prop_type':type, 'prop_val':val};
+		});
+		result[id] = ivaljson;
+	});
+	sysvars['interval_adjustments'] = result;
+}
+</script>
 <style type="text/css">
 	.interval_block {
 		margin-left:10px;
@@ -8,10 +27,11 @@
 	}
 	
 </style>
-<form id="intervals_preset">
+<div id="intervals_preset">
 	{% for ival in intervals %}
 		<strong>[{{ ival.type}}] {{ ival.name }}</strong> <br />
 		<div class="interval_block">
+			<input type="hidden" name="interval_id" value="{{ival.id}}" />
 		<label for="iduration_{{ival.id}}">Duration:</label>
 			<input type="text" name="iduration_{{ival.id}}" value="{{ival.duration}}"/> <br />
 		Properties: <br />
@@ -19,13 +39,13 @@
 		{% for iprop in ival.props.all %}
 			<label for="iprop_{{iprop.prop_name}}">{{ iprop.prop_name }}</label>
 			{% if iprop.prop_type == "INT" %}
-			<input type="text" name="iduration_{{ iprop.prop_name }}" value="{{ iprop.prop_val_int }}" placeholder="0" /> 
+			<input type="text" name="iprop_{{ iprop.prop_name }}" value="{{ iprop.prop_val_int }}" placeholder="0" data-type="INT" /> 
 			{% elif iprop.prop_type == "DEC" %}
-			<input type="text" name="iduration_{{ iprop.prop_name }}" value="{{ iprop.prop_val_dec }}" placeholder="0.0" /> 
+			<input type="text" name="iprop_{{ iprop.prop_name }}" value="{{ iprop.prop_val_dec }}" placeholder="0.0" data-type="DEC" /> 
 			{% elif iprop.prop_type == "BOO" %}
-			<input type="checkbox" name="iduration_{{ iprop.prop_name }}" {% if iprop.prop_val_boo %} checked="checked" {% endif %} >
+			<input type="checkbox" name="iprop_{{ iprop.prop_name }}" {% if iprop.prop_val_boo %} checked="checked" {% endif %} data-type="BOO" />
 			{% else %}
-			<input type="text" name="iduration_{{ iprop.prop_name }}" value="{{ iprop.prop_val_str }}"/> 
+			<input type="text" name="iprop_{{ iprop.prop_name }}" value="{{ iprop.prop_val_str }}" data-type="STR" /> 
 			{% endif %}
 			<br />	
 		{% endfor %}
@@ -34,6 +54,5 @@
 			
 		<br />
 	{% endfor %}
-	
-	<button class="k-button">Save</button>
-</form>
+	<button class="k-button" onclick="editIntervals();">Save</button>
+</div>

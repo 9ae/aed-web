@@ -11,7 +11,11 @@ function startExperiment(){
 	}
 	else {
 		var url="/perform/protocol/"+sysvars.protocol_id+"/experiment/start";
-		$.get(url).done(function(data){
+		var postdata = null;
+		if(sysvars.interval_adjustments!=undefined){
+			postdata = sysvars.interval_adjustments;
+		}
+		$.post(url, postdata).done(function(data){
 			sysvars['experiment_id'] = data.pk;
 			var exp_name = data.fields.name;
 			$('#div_experiment_name i').text(exp_name);
@@ -129,7 +133,6 @@ function openIntervalsEditor(){
 	  		visible:false
 		});
 		win = $("#kWindow").data("kendoWindow");
-	//	win.center();
 		win.open();
 	}
 }

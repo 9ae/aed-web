@@ -25,6 +25,7 @@ def index(request):
 	context = {'paradigm_name':'Mickey'}
 	return render(request,'index.html',context)
 
+@csrf_exempt
 def load_experiment(request,protocol):
 	m = Medea()
 	protocol_id=None
