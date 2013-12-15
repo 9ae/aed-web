@@ -1,6 +1,6 @@
 import aedsdk
 import time
-
+from decimal import Decimal
 import random
 
 class Mickey(aedsdk.Paradigm):
@@ -10,7 +10,7 @@ class Mickey(aedsdk.Paradigm):
 	
 	@staticmethod	
 	def varyInterval(interval):
-		if interval.varyby>0.0 or interval.varyby<0.0:
+		if interval.varyby!=0:
 			varyhalf = interval.varyby*0.5
 			interval.duration = interval.oridur + random.uniform(-1.0*varyhalf, varyhalf)
 	
@@ -50,8 +50,9 @@ class Mickey(aedsdk.Paradigm):
 			self.oridur = self.duration
 		
 		def init_duration(self,value):
-			self.oridur = value
-			self.duration = value
+			val = Decimal(value)
+			self.oridur = val
+			self.duration = val
 			
 		def on_LeverPress(self):
 			for act in self.events_LeverPress:
@@ -71,7 +72,7 @@ class Mickey(aedsdk.Paradigm):
 		
 		def set_prop(self,name,val):
 			if name=="varyby":
-				self.varyby = val
+				self.varyby = Decimal(val)
 			
 	class Tone(aedsdk.Interval):
 		def __init__(self, duration=0.0):
@@ -80,8 +81,9 @@ class Mickey(aedsdk.Paradigm):
 			self.oridur = self.duration
 		
 		def init_duration(self,value):
-			self.oridur = value
-			self.duration = value
+			val = Decimal(value)
+			self.oridur = val
+			self.duration = val
 		
 		def at_begin(self):
 			Mickey.varyInterval(self)
@@ -95,7 +97,7 @@ class Mickey(aedsdk.Paradigm):
 		
 		def set_prop(self,name,val):
 			if name=="varyby":
-				self.varyby = val	
+				self.varyby = Decimal(val)	
 	
 	class Present(aedsdk.Interval):
 		def __init__(self, duration=0.0):
@@ -104,8 +106,9 @@ class Mickey(aedsdk.Paradigm):
 			self.oridur = self.duration
 		
 		def init_duration(self,value):
-			self.oridur = value
-			self.duration = value
+			val = Decimal(value)
+			self.oridur = val
+			self.duration = val
 		
 		def at_begin(self):
 			Mickey.varyInterval(self)
@@ -126,7 +129,7 @@ class Mickey(aedsdk.Paradigm):
 		
 		def set_prop(self,name,val):
 			if name=="varyby":
-				self.varyby = val
+				self.varyby = Decimal(val)
 	
 	class Refrain(aedsdk.Interval):
 		def __init__(self, duration=0.0):
@@ -134,6 +137,11 @@ class Mickey(aedsdk.Paradigm):
 			self.reward = True
 			self.varyby = 0.0
 			self.oridur = self.duration
+		
+		def init_duration(self,value):
+			val = Decimal(value)
+			self.oridur = val
+			self.duration = val
 		
 		def at_begin(self):
 			Mickey.varyInterval(self)
@@ -159,4 +167,4 @@ class Mickey(aedsdk.Paradigm):
 				
 		def set_prop(self,name,val):
 			if name=="varyby":
-				self.varyby = val	
+				self.varyby = Decimal(val)	

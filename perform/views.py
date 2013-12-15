@@ -40,7 +40,7 @@ def load_experiment(request,protocol):
 			m.addError('protocol not found')
 	if m.noErrors():
 		ivals = None
-		if request.POST['change']:
+		if request.POST['change']=='true':
 			ivals = json.loads(request.POST['data'])
 		db_exp = boss.setup_experiement(protocol,ivals)
 		if db_exp!=None:

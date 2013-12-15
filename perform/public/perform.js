@@ -14,6 +14,7 @@ function startExperiment(){
 		var postdata = {'change':false,'data':null};
 		if(sysvars.interval_adjustments!=undefined){
 			postdata.data = JSON.stringify(sysvars.interval_adjustments);
+			postdata.change = true;
 		}
 		$.post(url, postdata).done(function(data){
 			sysvars['experiment_id'] = data.pk;
