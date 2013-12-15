@@ -32,7 +32,7 @@ class Dictator(object):
         self.experiment.save()
         self.executioner = Executioner() 
         libarian.init_db_cache(self.experiment)
-        self.lock = Lock()
+        # self.lock = Lock()
     
     def current_trial(self):
         return poke_cache(str(self.experiment.id)+'.trial_current',self.experiment.current_trial(),secs=60)
@@ -58,9 +58,9 @@ class Dictator(object):
         new_trial.save()
         old_trial = libarian.get_trial_current(self.experiment.id)
         if old_trial!=None:
-            w.NextTrialThread(old_trial,new_trial,trial_time,total_time,self.experiment,self.lock).start()
+            w.NextTrialThread(old_trial,new_trial,trial_time,total_time,self.experiment).start()
         else:
-            w.NewHappening('TRL','New Trial',total_time,self.experiment,self.lock).start()
+            w.NewHappening('TRL','New Trial',total_time,self.experiment).start()
         libarian.set_trial_current(new_trial,self.experiment.id)
         self.executioner.interval_pointer = 0
         self.executioner.is_new_trial = True
@@ -90,7 +90,7 @@ class Dictator(object):
             time = libarian.time_since_exp(self.experiment.id)
         else:
             time = given_time
-        thready = w.NewHappening('ACT',description,time,self.experiment,self.lock)
+        thready = w.NewHappening('ACT',description,time,self.experiment)
         thready.start()
         
     def event_happen(self,description,given_time=None):
@@ -98,12 +98,12 @@ class Dictator(object):
             time = libarian.time_since_exp(self.experiment.id)
         else:
             time = given_time
-        thready = w.NewHappening('EVT',description,time,self.experiment,self.lock)
+        thready = w.NewHappening('EVT',description,time,self.experiment)
         thready.start()
         
     def interval_happen(self,description):
         time = libarian.time_since_exp(self.experiment.id)
-        thready = w.NewHappening('ITL',description,time,self.experiment,self.lock)
+        thready = w.NewHappening('ITL',description,time,self.experiment)
         thready.start()
 
 def setup_experiement(db_protocol,delta_ivals):

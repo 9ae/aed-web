@@ -9,7 +9,7 @@ from decimal import Decimal
 from models import RuntimeCache, Happening
 from django.core import serializers
 from django.core.cache import cache
-from helpers import millisec
+from helpers import millisec, cereal
 
 from helpers import poke_cache
 
@@ -19,12 +19,18 @@ def clear_db_cache():
     cache.clear()
 '''
 
+from threading import Lock
+
+lock = None
+
 def init_db_cache(experiment):
+    global lock
     runcache = RuntimeCache(experiment=experiment,experiment_terminate=False)
     runcache.save()
     cache.set(str(experiment.id)+'.experiment',experiment)
     cache.set(str(experiment.id)+'.experiment_terminate',False)
     cache.set(str(experiment.id)+'.time_start_exp',experiment.time_start,1800)
+    lock = Lock()
 
 def get_experiment_current(exp_id):
     def from_db():
@@ -68,27 +74,32 @@ def clear_happenings(exp_id):
     cache.set(str(exp_id)+'.happening_ids','',40)
 
 def cache_happening(happening,exp_id):
-    happening_ids = get_happenings(exp_id)
+    global lock
     
-    # add to haps list
-    if happening_ids=='':
-        happening_ids = str(happening.id)
-    else:
-        happening_ids = happening_ids+','+str(happening.id)
-    
-    # make happening serialized
-    happening_str = serializers.serialize('json',[happening])
-    happening_str = happening_str.strip('[]')
-    hap_key = str(exp_id)+'.H.'+str(happening.id)
-    
-    #place list to rtc
-    rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)[0]
-    rtc.happeing_ids = happening_ids
-    rtc.save()
-    
-    #put in cache
-    cache.set(str(exp_id)+'.happening_ids',happening_ids,30)
-    cache.set(hap_key,happening_str,60)
+    lock.acquire()
+    try:
+        happening_ids = get_happenings(exp_id)
+        
+        # add to haps list
+        if happening_ids=='':
+            happening_ids = str(happening.id)
+        else:
+            happening_ids = happening_ids+','+str(happening.id)
+        
+        # make happening serialized
+        happening_str = cereal(happening)
+        hap_key = str(exp_id)+'.H.'+str(happening.id)
+        
+        #place list to rtc
+        rtc = RuntimeCache.objects.filter(experiment_id__exact=exp_id)[0]
+        rtc.happeing_ids = happening_ids
+        rtc.save()
+        
+        #put in cache
+        cache.set(str(exp_id)+'.happening_ids',happening_ids,30)
+        cache.set(hap_key,happening_str,60)
+    finally:
+        lock.release()
     
 def get_happening_by_id(hap_id,exp_id):
     hap_key = str(exp_id)+'.H.'+str(hap_id)
