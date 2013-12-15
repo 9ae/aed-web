@@ -35,6 +35,16 @@ function stopExperiment(){
 	});	
 }
 
+function extractDuration(idescript){
+	var regex = /^\[(\d+\.*\d*)\]\s.+$/g;
+	var match = regex.exec(idescript);
+	if(match!=null && match.length===2){
+		return match[1];
+	} else {
+		return 0;
+	}
+}
+
 function logHappenings(haps){
 	var len = haps.length;
 	for(var i=0; i<len; i++){
@@ -43,6 +53,9 @@ function logHappenings(haps){
 			kendoConsole.attn(details.time_occurred+" : "+details.description);
 		} else {
 			kendoConsole.log(details.time_occurred+" : "+details.description);
+		}
+		if(details.type==='ITL'){
+			console.log(extractDuration(details.description));
 		}
 	}
 }

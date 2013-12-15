@@ -61,7 +61,7 @@ class Mickey(aedsdk.Paradigm):
 		def at_begin(self):
 			Mickey.varyInterval(self)
 			aedsdk.Interval.at_begin(self)
-			self.exe.interval_happen('Begin Wait')
+			self.exe.interval_happen('[%f] Begin Wait'%self.duration)
 			
 		def at_end(self):
 			aedsdk.Interval.at_end(self)
@@ -88,7 +88,7 @@ class Mickey(aedsdk.Paradigm):
 		def at_begin(self):
 			Mickey.varyInterval(self)
 			aedsdk.Interval.at_begin(self)
-			self.exe.interval_happen('Begin Tone')
+			self.exe.interval_happen('[%f] Begin Tone'%self.duration)
 		
 		def at_end(self):
 			aedsdk.Interval.at_end(self)
@@ -113,7 +113,7 @@ class Mickey(aedsdk.Paradigm):
 		def at_begin(self):
 			Mickey.varyInterval(self)
 			aedsdk.Interval.at_begin(self)
-			self.exe.interval_happen('Begin Present')
+			self.exe.interval_happen('[%f] Begin Present'%self.duration)
 		
 		def at_end(self):
 			aedsdk.Interval.at_end(self)		
@@ -146,7 +146,7 @@ class Mickey(aedsdk.Paradigm):
 		def at_begin(self):
 			Mickey.varyInterval(self)
 			aedsdk.Interval.at_begin(self)
-			self.exe.interval_happen('Begin Refrain')
+			self.exe.interval_happen('[%f] Begin Refrain'%self.duration)
 		
 		def at_end(self):
 			if self.reward:
