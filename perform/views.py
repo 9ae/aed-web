@@ -156,3 +156,6 @@ def simulate(request,experiment):
 	se = SimEvent(experiment=exp,time_occurred=exp_time,eventid=event_id)
 	se.save()
 	return HttpResponse('{"ok":true}', content_type="application/json")
+
+def graph(request):
+	return render(request,'graph.html')

@@ -1,0 +1,13 @@
+.trial {
+	display:block;
+	clear:both;
+	min-height: 5px;
+	z-index:1;
+}
+
+.interval {
+	display:inline;
+	clear:none;
+	min-height: 5px;
+	z-index:1;
+}

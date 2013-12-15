@@ -1,4 +1,4 @@
-var sysvars ={'protocol_id':1, 'paradigm_id':1, 'haps_ready':false}
+var sysvars ={'protocol_id':1, 'paradigm_id':1, 'haps_ready':false, 'graph_ready':false};
 
 function cssExpandHeightUntilEnd(selector){
 	var element = $(selector);
@@ -23,6 +23,7 @@ function startExperiment(){
 			sysvars['haps_check'] = setInterval(checkHappenings,1000);
 			sysvars.haps_ready = true;
 		});
+		initGraph();
 	}
 }
 
@@ -153,6 +154,14 @@ function openIntervalsEditor(){
 		win = $("#kWindow").data("kendoWindow");
 		win.open();
 	}
+}
+
+function initGraph(){
+	$('#graph').load('/perform/graph',function( response, status, xhr ){
+		if(status==="success"){
+			sysvars.graph_ready = true;
+		}
+	});
 }
 
 window.onload = function(){

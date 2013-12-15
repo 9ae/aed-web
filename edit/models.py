@@ -58,6 +58,7 @@ class Interval(models.Model):
 	duration = models.DecimalField(max_digits=8, decimal_places=3,default=0.0)
 	name = models.CharField(max_length=100)
 	props = models.ManyToManyField(AIEProperty,related_name='i+',blank=True)
+	color = models.CharField(max_length=6,default='000000')
 
 	def __unicode__(self):
 		return u'[%d] %s(%s) < %s' % (self.id, self.name, self.type, self.protocol)
@@ -75,6 +76,7 @@ class Action(models.Model):
 	paradigm = models.ForeignKey(Paradigm)
 	type = models.CharField(max_length=100)
 	props = models.ManyToManyField(AIEProperty,related_name='a+',blank=True)
+	color = models.CharField(max_length=6,default='000000')
 	
 	def __unicode__(self):
 		return u'[%d] %s < %s' % (self.id, self.type, self.paradigm.name)
@@ -84,6 +86,7 @@ class Event(models.Model):
 	type = models.CharField(max_length=100)
 	name = models.CharField(max_length=100)
 	props = models.ManyToManyField(AIEProperty,related_name='e+',blank=True)
+	color = models.CharField(max_length=6,default='000000')
 
 	def __unicode__(self):
 		return u'[%d] %s(%s) < %s' % (self.id, self.name, self.type, self.protocol.name)
