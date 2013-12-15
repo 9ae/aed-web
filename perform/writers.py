@@ -10,38 +10,47 @@ from models import Experiment, Trial, Happening
 import libarian
 
 class NextTrialThread(Thread):
-    def __init__(self,old_trial,new_trial,trial_time,total_time):
+    def __init__(self,old_trial,new_trial,trial_time,total_time,experiment,lock):
         Thread.__init__(self)
         self.old_trial=old_trial
         self.new_trial=new_trial
         self.total_time = total_time
         self.trial_time = trial_time
+        self.experiment=experiment
+        self.lock = lock
     
     def run(self):
         self.old_trial.completed=True
         self.old_trial.duration = self.trial_time
         self.old_trial.save()
-        hap = Happening(trial=self.new_trial, time_occurred=self.total_time, type='TRL', description='New Trial')
-        hap.save()
-        libarian.cache_happening(hap,self.new_trial.experiment.id)
+        self.lock.acquire()
+        try:
+            hap = Happening(experiment=self.experiment, time_occurred=self.total_time, type='TRL', description='New Trial')
+            hap.save()
+            libarian.cache_happening(hap,self.new_trial.experiment.id)
+        finally:
+            self.lock.release()
 
 class NewHappening(Thread):
-    def __init__(self,htype,descript,time,exp_id):
+    def __init__(self,htype,descript,time,exp,lock=None):
         Thread.__init__(self)
-        self.trial=libarian.get_trial_current(exp_id)
         self.type=htype
         self.desription=descript
         self.time=time
-        self.experiment_id = exp_id
+        self.experiment = exp
+        self.lock = lock
     
     def run(self):
-        if self.trial==None:
-            return
-        else:
-            hap = Happening(trial=self.trial, time_occurred=self.time, type=self.type, description=self.desription)
+        if self.lock!=None:
+            self.lock.acquire()
+        try:
+            hap = Happening(experiment=self.experiment, time_occurred=self.time, type=self.type, description=self.desription)
             hap.save()
             print '%s @ %f'%(self.desription,self.time)
-            libarian.cache_happening(hap,self.experiment_id)
+            libarian.cache_happening(hap,self.experiment.id)
+        finally:
+            if self.lock!=None:
+                self.lock.release()
 
 class MarkHappening(Thread):
     def __init__(self,hap_id):

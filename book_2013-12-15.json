@@ -1,0 +1,142 @@
+[
+	{
+		"pk": 1,
+		"model": "edit.aieproperty",
+		"fields": {
+			"prop_name": "valve",
+			"prop_val_dec": null,
+			"prop_val_str": "",
+			"prop_val_boo": false,
+			"prop_val_int": 1,
+			"prop_type": "INT"
+		}
+	}, {
+		"pk": 2,
+		"model": "edit.aieproperty",
+		"fields": {
+			"prop_name": "varyby",
+			"prop_val_dec": "0",
+			"prop_val_str": "",
+			"prop_val_boo": false,
+			"prop_val_int": null,
+			"prop_type": "DEC"
+		}
+	}, {
+		"pk": 3,
+		"model": "edit.aieproperty",
+		"fields": {
+			"prop_name": "varyby",
+			"prop_val_dec": "0",
+			"prop_val_str": "",
+			"prop_val_boo": false,
+			"prop_val_int": null,
+			"prop_type": "DEC"
+		}
+	},{
+		"pk": 4,
+		"model": "edit.aieproperty",
+		"fields": {
+			"prop_name": "varyby",
+			"prop_val_dec": "0",
+			"prop_val_str": "",
+			"prop_val_boo": false,
+			"prop_val_int": null,
+			"prop_type": "DEC"
+		}
+	}, {
+		"pk": 1,
+		"model": "edit.paradigm",
+		"fields": {
+			"file_location": "/Users/ari/slytherin/aed-web/paradigms/Mickey.py",
+			"created_on": "2013-11-25T03:20:57.697",
+			"name": "Mickey"
+		}
+	}, {
+		"pk": 1,
+		"model": "edit.protocol",
+		"fields": {
+			"modified_on": "2013-11-25T03:21:16.175",
+			"created_on": "2013-11-25T03:21:16.175",
+			"paradigm": 1,
+			"name": "Simple Test",
+			"trial_duration": "10"
+		}
+	}, {
+		"pk": 1,
+		"model": "edit.interval",
+		"fields": {
+			"protocol": 1,
+			"name": "precursor",
+			"props": [2],
+			"duration": "2",
+			"type": "Wait",
+			"order": 1
+		}
+	}, {
+		"pk": 2,
+		"model": "edit.interval",
+		"fields": {
+			"protocol": 1,
+			"name": "play tone",
+			"props": [3],
+			"duration": "1.3",
+			"type": "Tone",
+			"order": 2
+		}
+	}, {
+		"pk": 3,
+		"model": "edit.interval",
+		"fields": {
+			"protocol": 1,
+			"name": "reward interval",
+			"props": [4],
+			"duration": "7",
+			"type": "Present",
+			"order": 3
+		}
+	}, {
+		"pk": 1,
+		"model": "edit.action",
+		"fields": {
+			"paradigm": 1,
+			"type": "LeverPress",
+			"props": []
+		}
+	}, {
+		"pk": 1,
+		"model": "edit.event",
+		"fields": {
+			"type": "Restart",
+			"protocol": 1,
+			"name": "restart trial",
+			"props": []
+		}
+	}, {
+		"pk": 2,
+		"model": "edit.event",
+		"fields": {
+			"type": "Reward",
+			"protocol": 1,
+			"name": "reward1",
+			"props": [1]
+		}
+	}, {
+		"pk": 1,
+		"model": "edit.intervalaction",
+		"fields": {
+			"action": 1,
+			"interval": 3,
+			"order": 1,
+			"event": 2
+		}
+	}, {
+		"pk": 2,
+		"model": "edit.intervalaction",
+		"fields": {
+			"action": 1,
+			"interval": 3,
+			"order": 2,
+			"event": 1
+		}
+	}
+]

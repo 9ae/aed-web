@@ -1,4 +1,4 @@
-var sysvars ={'protocol_id':1, 'paradigm_id':1}
+var sysvars ={'protocol_id':1, 'paradigm_id':1, 'haps_ready':false}
 
 function cssExpandHeightUntilEnd(selector){
 	var element = $(selector);
@@ -21,6 +21,7 @@ function startExperiment(){
 			var exp_name = data.fields.name;
 			$('#div_experiment_name i').text(exp_name);
 			sysvars['haps_check'] = setInterval(checkHappenings,1000);
+			sysvars.haps_ready = true;
 		});
 	}
 }
@@ -47,9 +48,12 @@ function logHappenings(haps){
 }
 
 function checkHappenings(){
+	if(!sysvars.haps_ready) return;
+	sysvars.haps_ready = false;
 	var url = '/perform/experiment/'+sysvars.experiment_id+"/happenings";
 	$.get(url).done(function(data){
 		logHappenings(data.happenings);
+		sysvars.haps_ready = true;
 	});
 }
 
