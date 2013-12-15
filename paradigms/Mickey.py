@@ -11,8 +11,8 @@ class Mickey(aedsdk.Paradigm):
 	@staticmethod	
 	def varyInterval(interval):
 		if interval.varyby!=0:
-			varyhalf = interval.varyby*0.5
-			interval.duration = interval.oridur + random.uniform(-1.0*varyhalf, varyhalf)
+			varyhalf = float(interval.varyby)*0.5
+			interval.duration = interval.oridur + Decimal(random.uniform(-1.0*varyhalf, varyhalf))
 	
 	class LeverPress(aedsdk.Action):
 		def __init__(self):

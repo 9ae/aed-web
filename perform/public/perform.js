@@ -11,10 +11,10 @@ function startExperiment(){
 	}
 	else {
 		var url="/perform/protocol/"+sysvars.protocol_id+"/experiment/start";
-		var postdata = {'change':false,'data':null};
+		var postdata = {'change':0,'data':null};
 		if(sysvars.interval_adjustments!=undefined){
 			postdata.data = JSON.stringify(sysvars.interval_adjustments);
-			postdata.change = true;
+			postdata.change = 1;
 		}
 		$.post(url, postdata).done(function(data){
 			sysvars['experiment_id'] = data.pk;
