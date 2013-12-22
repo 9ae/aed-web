@@ -133,7 +133,7 @@ def mark(request,experiment):
 	experiment_id = int(experiment)
 	exp = libarian.get_experiment_current(experiment_id)
 	exp_time = libarian.time_since_exp(experiment_id)
-	NewHappening('MRK','Mark Point',exp_time,exp).start()
+	NewHappening('MRK','','Mark Point',exp_time,exp).start()
 	return HttpResponse('{"ok":true}', content_type="application/json")
 
 @csrf_exempt

@@ -27,15 +27,16 @@ class NextTrialThread(Thread):
         self.old_trial.save()
         
 class NewHappening(Thread):
-    def __init__(self,htype,descript,time,exp):
+    def __init__(self,htype,keyname,descript,time,exp):
         Thread.__init__(self)
         self.type=htype
         self.desription=descript
         self.time=time
         self.experiment = exp
+        self.keyname = keyname
     
     def run(self):
-        hap = Happening(experiment=self.experiment, time_occurred=self.time, type=self.type, description=self.desription)
+        hap = Happening(experiment=self.experiment, time_occurred=self.time, type=self.type, description=self.desription, keyname=self.keyname)
         hap.save()
         print '%s @ %f'%(self.desription,self.time)
         libarian.cache_happening(hap,self.experiment.id)

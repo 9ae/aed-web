@@ -26,7 +26,7 @@ class Mickey(aedsdk.Paradigm):
 			self.valve = 0
 
 		def perform(self,time=None):
-			self.exe.event_happen('Reward from valve %d'%(self.valve),given_time=time)
+			self.exe.event_happen('Reward from valve %d'%(self.valve),self.name,given_time=time)
 		
 		def set_prop(self,name,val):
 			if name=="valve":
@@ -40,7 +40,6 @@ class Mickey(aedsdk.Paradigm):
 			pass
 		
 		def perform(self,time=None):
-			#self.exe.event_happen('Restart trial')
 			self.exe.new_trial()
 	
 	class Wait(aedsdk.Interval):   
@@ -61,7 +60,7 @@ class Mickey(aedsdk.Paradigm):
 		def at_begin(self):
 			Mickey.varyInterval(self)
 			aedsdk.Interval.at_begin(self)
-			self.exe.interval_happen('[%f] Begin Wait'%self.duration)
+			self.exe.interval_happen('[%f] Begin Wait'%(self.duration),self.name)
 			
 		def at_end(self):
 			aedsdk.Interval.at_end(self)
@@ -88,7 +87,7 @@ class Mickey(aedsdk.Paradigm):
 		def at_begin(self):
 			Mickey.varyInterval(self)
 			aedsdk.Interval.at_begin(self)
-			self.exe.interval_happen('[%f] Begin Tone'%self.duration)
+			self.exe.interval_happen('[%f] Begin Tone'%(self.duration),self.name)
 		
 		def at_end(self):
 			aedsdk.Interval.at_end(self)
@@ -113,13 +112,12 @@ class Mickey(aedsdk.Paradigm):
 		def at_begin(self):
 			Mickey.varyInterval(self)
 			aedsdk.Interval.at_begin(self)
-			self.exe.interval_happen('[%f] Begin Present'%self.duration)
+			self.exe.interval_happen('[%f] Begin Present'%(self.duration),self.name)
 		
 		def at_end(self):
 			aedsdk.Interval.at_end(self)		
 		
 		def on_LeverPress(self):
-			#self.exe.action_happen('Lever Pressed on Present interval')
 			for act in self.events_LeverPress:
 				act.perform()
 				
@@ -146,18 +144,16 @@ class Mickey(aedsdk.Paradigm):
 		def at_begin(self):
 			Mickey.varyInterval(self)
 			aedsdk.Interval.at_begin(self)
-			self.exe.interval_happen('[%f] Begin Refrain'%self.duration)
+			self.exe.interval_happen('[%f] Begin Refrain'%(self.duration),self.name)
 		
 		def at_end(self):
 			if self.reward:
 				aedsdk.Interval.at_end(self)
-				self.exe.event_happen('Reward from valve %d at the end of a Refrain interval'%(self.valve))
 			else:
 				pass
 		
 		def on_LeverPress(self):
 			self.reward = False
-			#self.exe.action_happen('Lever Pressed on Refrain interval')
 			for act in self.events_LeverPress:
 				act.perform()
 				

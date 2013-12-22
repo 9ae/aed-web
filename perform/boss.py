@@ -71,7 +71,7 @@ class Dictator(object):
             act = em.Action.objects.filter(type=action_type)[0]
             try:
                 ea =  EmulateAction.objects.filter(experiment=self.experiment, action=act).latest('id')
-                self.action_happen('Lever Pressed',ea.time_occurred)
+                self.action_happen('%s'%(action_type),action_type,ea.time_occurred)
                 ea.delete()
                 return True
             except ObjectDoesNotExist:
@@ -85,25 +85,25 @@ class Dictator(object):
             self.eventObjects[se.eventid].perform(time=se.time_occurred)
         event_ids.delete()    
     
-    def action_happen(self,description,given_time=None):
+    def action_happen(self,description,keyname,given_time=None):
         if given_time==None:
             time = libarian.time_since_exp(self.experiment.id)
         else:
             time = given_time
-        thready = w.NewHappening('ACT',description,time,self.experiment)
+        thready = w.NewHappening('ACT',keyname,description,time,self.experiment)
         thready.start()
         
-    def event_happen(self,description,given_time=None):
+    def event_happen(self,description,keyname,given_time=None):
         if given_time==None:
             time = libarian.time_since_exp(self.experiment.id)
         else:
             time = given_time
-        thready = w.NewHappening('EVT',description,time,self.experiment)
+        thready = w.NewHappening('EVT',keyname,description,time,self.experiment)
         thready.start()
         
-    def interval_happen(self,description):
+    def interval_happen(self,description,keyname):
         time = libarian.time_since_exp(self.experiment.id)
-        thready = w.NewHappening('ITL',description,time,self.experiment)
+        thready = w.NewHappening('ITL',keyname,description,time,self.experiment)
         thready.start()
 
 def setup_experiement(db_protocol,delta_ivals):

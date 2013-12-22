@@ -31,6 +31,7 @@ class Happening(models.Model):
     description = models.TextField(default='',blank=True)
     broadcast = models.BooleanField(default=False)
     write_on = models.DateTimeField(auto_now=True)
+    keyname = models.CharField(max_length=100, default='',blank=True)
     
 class RuntimeCache(models.Model):
     experiment = models.OneToOneField(Experiment,null=True,blank=True)
