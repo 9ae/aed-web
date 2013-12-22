@@ -3,7 +3,7 @@ var Graphine = {
     fields: {
         chart: null,
         barHeight: 0,
-        rows: 0,
+        rows: 1,
         pps: 0,
         ivalColors: {},
         actColors: {},
@@ -31,7 +31,6 @@ var Graphine = {
         }
     },
     firstRow: function (row) {
-        this.fields.rows++;
         this.fields.barHeight = this.fields.chart.attr('height') / this.fields.rows;
         var line = this.fields.chart.append('g').attr('id', 'current');
         this.fields.chart.append('g').attr('id', 'past');
@@ -47,7 +46,7 @@ var Graphine = {
         }).attr("height", this.fields.barHeight)
            .attr("fill", function (d) {
             return '#'+d.color;
-        });
+        }).attr('fill-opacity',0.5);
     },
     initActions: function(acts){
     	for(var i=0; i<acts.length; i++){
@@ -71,28 +70,32 @@ var Graphine = {
         var h = this.fields.chart.attr('height');
         var delta = i / (i + 1);
         var move = h / (i + 1);
+        var m2 = move*delta;
         this.fields.chart.selectAll('#past rect').each(function () {
             Graphine.appendTransform(d3.select(this), 'translate(0,' + move + ') scale(1.0,' + delta + ')');
         });
          this.fields.chart.selectAll('#past circle').each(function () {
-         	var m2 = move*0.5;
-            Graphine.appendTransform(d3.select(this), 'translate(0,' + m2 + ')');
+         	var cy = parseFloat(d3.select(this).attr('cy'));
+         	var dy = Math.abs(m2 - cy);
+         	cy += dy;
+            d3.select(this).attr('cy',cy);
+            //appendTransform('transform','translate(0,' + m2 + ')');
         });
 
         this.fields.rows++;
-        this.fields.barHeight = this.fields.chart.attr('height') / this.fields.rows;
+        this.fields.barHeight = h / this.fields.rows;
       //  this.fields.dy = (this.fields.rows - 1) * this.fields.barHeight;
         this.fields.dx = 0;
     },
     addInterval: function(ival){
-        /* ival = {'id': #, 'duration': #} */
+        /* ival = {'name': ..., 'duration': #} */
         var c = '#'+this.fields.ivalColors[ival['name']];
         var w = ival.duration * this.fields.pps;
         this.fields.chart.select("#current").append('rect')
         .attr("transform","translate("+this.fields.dx+","+this.fields.dy+")")
         .attr("width", w)
         .attr("height", this.fields.barHeight)
-        .attr("fill",c);
+        .attr("fill",c).attr('fill-opacity',0.5).attr('stroke','#000000');
         this.fields.dx += w;
     },
     addAction: function(hap){

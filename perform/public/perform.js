@@ -32,6 +32,8 @@ function startExperiment() {
 			sysvars['haps_check'] = setInterval(checkHappenings, 1000);
 			sysvars.haps_ready = true;
 		});
+		$('#btn_start').prop('disabled',true);
+		$('#btn_start').addClass('disabled');
 	}
 }
 
@@ -74,7 +76,9 @@ function logHappenings(haps) {
 				'duration' : 0
 			};
 			o['duration'] = extractDuration(details.description);
-			Graphine.addInterval(o);
+			if(sysvars.trials>1){
+				Graphine.addInterval(o);
+			}
 		} else if (details.type === 'ACT') {
 			var o = {
 				'name' : details.keyname,

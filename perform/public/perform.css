@@ -136,3 +136,8 @@ div {
 	left:20%;
 	width:80%;	
 }
+
+.disabled{
+	background-color:#efefef;
+	border-color:#fefefe;
+}
