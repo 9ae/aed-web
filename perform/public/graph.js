@@ -1,4 +1,3 @@
-
 var Graphine = {
     fields: {
         chart: null,
@@ -76,8 +75,8 @@ var Graphine = {
         });
          this.fields.chart.selectAll('#past circle').each(function () {
          	var cy = parseFloat(d3.select(this).attr('cy'));
-         	var dy = Math.abs(m2 - cy);
-         	cy += dy;
+         	var trial = parseInt(d3.select(this).parent().attr('id').replace('trial',''));
+         	cy = move*trial - move*0.5;
             d3.select(this).attr('cy',cy);
             //appendTransform('transform','translate(0,' + m2 + ')');
         });
