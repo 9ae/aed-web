@@ -1,13 +1,56 @@
-.trial {
-	display:block;
-	clear:both;
-	min-height: 5px;
-	z-index:1;
+.rasta {z-index:1}
+
+#legend {
+	z-index:2;
+	position:absolute;
+	top:40px;
+	right:0px;
+	margin-right:5px;
+	border:#333333 double 1px;
+	width:170px;
+	cursor:pointer;
 }
 
-.interval {
-	display:inline;
-	clear:none;
-	min-height: 5px;
-	z-index:1;
+#legend div.heading{
+	width:100%;
+	color:#FFFFFF;
+	background-color:#000000;
+	padding:2px;
 }
+
+.details {
+	display: none;
+	padding:5px;
+	background-color:#FFFFFF;
+	color:#000000;
+}
+
+.legend_intervals ol {
+	list-style-position:inside;
+	padding:0;
+}
+
+
+.legend_intervals li {
+padding-top:4px;
+padding-bottom:4px;
+}
+
+
+.legend_actions li {
+	list-style-type: disc;
+}
+
+.legend_events li {
+	list-style-type: circle;
+}
+.details ul {
+	padding:0;
+	list-style-position:inside;
+}
+
+.details li {
+	font-size:smaller;
+}
+
+
