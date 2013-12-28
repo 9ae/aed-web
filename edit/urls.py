@@ -8,4 +8,5 @@ urlpatterns = patterns('',
 	url(r'^protocol/(?P<protocol_id>\d+)/events$', views.events_list),
 	url(r'^protocol/(?P<protocol_id>\d+)/intervals$',views.intervals_list),
 	url(r'^protocol/(?P<protocol_id>\d+)/intervals/view',views.intervals_listview),
+	url(r'^paradigm/(?P<paradigm_id>\d+)/make_experiment',views.make_experiment),
 )

@@ -1,14 +1,18 @@
 # Create your views here.
 
+from decimal import Decimal
+
 from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.shortcuts import render
 from django.utils import simplejson
 from django.core import serializers
+from django.views.decorators.csrf import csrf_exempt
 
 import models
 from decadence import json_encode_decimal
 from perform.helpers import cereal
+
 
 # from perform.helpers import cereal
 
@@ -81,3 +85,15 @@ def intervals_listview(request,protocol_id):
 	intervals = protocol.intervals()
 	content = {'intervals':intervals}
 	return render(request,'intervals.html',content)
+
+@csrf_exempt
+def make_experiment(request,paradigm_id):
+	pid = int(paradigm_id)
+	paradigm = models.Paradigm.objects.get(id=pid)
+	duration = request.POST.get('duration',10)
+	duration = Decimal(duration)
+	protocol = models.Protocol(paradigm=paradigm, name=paradigm.name, trial_duration=duration)
+	protocol.save()
+	content = {'protocol_id':protocol.pk}
+	s = simplejson.dumps(content)
+	return HttpResponse(s,content_type="application/json")

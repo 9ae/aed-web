@@ -1,12 +1,24 @@
 /* global variables */
 var sysvars = {
-	experiment_id:0
+	default_paradigm_id:1,
+	protocol_id:0
 };
 
 /* Menu functions */
 
 function edit_trialDuration(){
 	loadInDetails('#trial_duration');
+}
+
+function makeNewProtocol(paradigm_id){
+	if(paradigm_id===undefined){
+		paradigm_id = sysvars.default_paradigm_id;
+	}
+	var url = '/edit/paradigm/'+paradigm_id+'/make_experiment';
+	var duration = $('input[name="duration"]').val();
+	$.post(url,{'duration':duration}, function(data){
+		sysvars.protocol_id = data.protocol_id;
+	});
 }
 
 
@@ -41,8 +53,8 @@ function set_PixelsPerSecond(duration){
 	d3.select('#timeline').remove();
 	var w = $('#flow').width();
 	var pps = w / duration;
-	//var sc = d3.time.scale().domain([0,duration]).range([0,w]).ticks(d3.time.second,1);
-	var sc = d3.scale.linear().domain([0,duration]).range([0,w-30]);
+	var sc = d3.time.scale().domain([0,duration*1000]).range([0,w-30]);
+	//var sc = d3.scale.linear().domain([0,duration]).range([0,w-30]);
 	var ax = d3.svg.axis().scale(sc).orient('top');
 	d3.select('#flow')
 		.attr('width',w)
@@ -51,11 +63,13 @@ function set_PixelsPerSecond(duration){
 			.attr('id','timeline')
 			.attr("transform", "translate(5,25)")
 			.attr('class','axis')
+			.style({'font-size':'0.5em','stroke-width':1})
 			.call(ax);
 }
 
 window.onload = function() {
-
+	makeNewProtocol();
+	
 	cssExpandHeightUntilEnd('.toolbox');
 	cssExpandHeightUntilEnd('.buttons-panel');
 	cssExpandHeightUntilEnd('.details-panel');
