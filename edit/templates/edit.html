@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link href="/static/styles/kendo.common.min.css" rel="stylesheet" />
+<link href="/static/styles/kendo.flat.min.css" rel="stylesheet" />
+<link href="/static/edit.css" rel="stylesheet" />
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/kendo.core.min.js"></script>
+<script src="/static/js/kendo.menu.min.js"></script>
+<script src="/static/js/kendo.popup.min.js"></script>
+<script src="/static/js/kendo.userevents.min.js"></script>
+<script src="/static/js/kendo.draganddrop.min.js"></script>
+<script src="/static/js/kendo.window.min.js"></script>
+<script src="/static/d3/d3.v3.js" charset="utf-8"></script>
+<script src="/static/helpers.js"></script>
+<script type="text/javascript" src="/static/edit.js"></script>
+<title>Aed ~ Protocol Editor</title>
+</head>
+<body>
+<div id="div_topmenu">
+	<ul id="menu">
+		<li>File
+				<ul>
+					<li>New</li>
+					<li>Open</li>
+					<li>Close</li>
+					<li><hr /></li>
+					<li>Delete</li>
+					<li>Save</li>
+					<li>Clone</li>
+					<li><hr /></li>
+					<li>Change Paradigm</li>
+				</ul>
+		</li>			
+		<li>Edit
+			<ul>
+				<li onclick="edit_trialDuration()">Trial Duration</li>
+				<li>Protocol Name</li>
+			</ul>
+		</li>
+		<li>Options</li>
+	</ul>
+	<div id="div_paradigm_name"><b>Paradigm: </b><i>none</i></div>
+</div>
+<svg id="flow"></svg>
+
+<div class="toolbox">
+	<div class="buttons-panel">
+		<button id="btn_add_ival" class="k-button">Add Interval</button> <br />
+		<button id="btn_add_evt" class="k-button">Add Event</button> <br />
+		<button id="btn_del_sel" class="k-button">Delete Selection</button>
+	</div>
+	<div class="details-panel k-content">
+		
+	</div>
+</div>
+
+<div class="secrets">
+	<div id="trial_duration">
+		<label class="info">Trial Duration</label><br />
+		&nbsp;&nbsp;<input type="text" name="duration" value="{{default_duration}}"
+		 placeholder="0.0" class="k-input" /> seconds <br />
+		&nbsp;&nbsp;<button class="k-button" onclick="set_trialDuration()">Set</button>
+	</div>
+</div>
+
+</body>
+</html>

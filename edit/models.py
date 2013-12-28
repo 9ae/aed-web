@@ -41,6 +41,7 @@ class Protocol(models.Model):
 	trial_duration = models.DecimalField(max_digits=8, decimal_places=3,default=0.0)
 	created_on = models.DateTimeField(auto_now_add=True)
 	modified_on = models.DateTimeField(auto_now=True)
+	is_temp = models.BooleanField(default=True)
 	
 	def intervals(self):
 		return Interval.objects.filter(protocol=self).order_by('order')

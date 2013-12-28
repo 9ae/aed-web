@@ -7,11 +7,6 @@ var sysvars = {
 	'trial_start_time': 0.0
 };
 
-function cssExpandHeightUntilEnd(selector) {
-	var element = $(selector);
-	element.height($(window).height() - (element.offset().top));
-}
-
 function startExperiment() {
 	if (sysvars.protocol_id == undefined) {
 		alert('protocol id is undefined');

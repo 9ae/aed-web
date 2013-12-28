@@ -13,7 +13,8 @@ from perform.helpers import cereal
 # from perform.helpers import cereal
 
 def index(request):
-	return HttpResponse("Hello")
+	content = {'default_duration':10.0}
+	return render(request,'edit.html',content)
 
 def get_protocol(request,protocol_id):
 	pid = int(protocol_id)
