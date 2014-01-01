@@ -20,6 +20,7 @@ class Mickey(aedsdk.Paradigm):
 		
 		def detect(self):
 			return self.exe.check_emulate_action('LeverPress')
+		
 	
 	class Reward(aedsdk.Event):
 		def __init__(self):
@@ -34,6 +35,12 @@ class Mickey(aedsdk.Paradigm):
 		
 		def __str__(self):
 			return "Reward { valve:"+str(self.valve)+" }"
+		
+		@classmethod
+		def json(cls):
+			result = super(Mickey.Reward,cls).json()
+			result['props'].append({'name':'valve','type':'INT'})
+			return result
 		
 	class Restart(aedsdk.Event):
 		def __init__(self):
@@ -72,6 +79,13 @@ class Mickey(aedsdk.Paradigm):
 		def set_prop(self,name,val):
 			if name=="varyby":
 				self.varyby = Decimal(val)
+		
+		@classmethod
+		def json(cls):
+			result = super(Mickey.Wait,cls).json()
+			result['props'].append({'name':'varyby','type':'DEC','default':0.0})
+			return result
+				
 			
 	class Tone(aedsdk.Interval):
 		def __init__(self, duration=0.0):
@@ -96,7 +110,13 @@ class Mickey(aedsdk.Paradigm):
 		
 		def set_prop(self,name,val):
 			if name=="varyby":
-				self.varyby = Decimal(val)	
+				self.varyby = Decimal(val)
+		
+		@classmethod
+		def json(cls):
+			result = super(Mickey.Tone,cls).json()
+			result['props'].append({'name':'varyby','type':'DEC','default':0.0})
+			return result	
 	
 	class Present(aedsdk.Interval):
 		def __init__(self, duration=0.0):
@@ -128,6 +148,12 @@ class Mickey(aedsdk.Paradigm):
 		def set_prop(self,name,val):
 			if name=="varyby":
 				self.varyby = Decimal(val)
+		
+		@classmethod
+		def json(cls):
+			result = super(Mickey.Present,cls).json()
+			result['props'].append({'name':'varyby','type':'DEC','default':0.0})
+			return result
 	
 	class Refrain(aedsdk.Interval):
 		def __init__(self, duration=0.0):
@@ -163,4 +189,10 @@ class Mickey(aedsdk.Paradigm):
 				
 		def set_prop(self,name,val):
 			if name=="varyby":
-				self.varyby = Decimal(val)	
+				self.varyby = Decimal(val)
+		
+		@classmethod
+		def json(cls):
+			result = super(Mickey.Refrain,cls).json()
+			result['props'].append({'name':'varyby','type':'DEC','default':0.0})
+			return result	

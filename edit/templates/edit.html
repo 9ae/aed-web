@@ -7,11 +7,14 @@
 <link href="/static/edit.css" rel="stylesheet" />
 <script src="/static/js/jquery.min.js"></script>
 <script src="/static/js/kendo.core.min.js"></script>
+<script src="/static/js/kendo.data.min.js"></script>
 <script src="/static/js/kendo.menu.min.js"></script>
 <script src="/static/js/kendo.popup.min.js"></script>
 <script src="/static/js/kendo.userevents.min.js"></script>
 <script src="/static/js/kendo.draganddrop.min.js"></script>
 <script src="/static/js/kendo.window.min.js"></script>
+<script src="/static/js/kendo.list.min.js"></script>
+<script src="/static/js/kendo.combobox.min.js"></script>
 <script src="/static/d3/d3.v3.js" charset="utf-8"></script>
 <script src="/static/helpers.js"></script>
 <script type="text/javascript" src="/static/edit.js"></script>
@@ -51,21 +54,32 @@
 
 <div class="toolbox">
 	<div class="buttons-panel">
-		<button id="btn_add_ival" class="k-button">Add Interval</button> <br />
-		<button id="btn_add_evt" class="k-button">Add Event</button> <br />
+		<button id="btn_add_ival" class="k-button" onclick="btn_newInterval()">Add Interval</button> <br />
+		<button id="btn_add_evt" class="k-button" onclick="btn_newEvent()">Add Event</button> <br />
 		<button id="btn_del_sel" class="k-button">Delete Selection</button>
 	</div>
+<!--	<div class="interval_type_container"></div>
+	<div class="event_type_container"><input id="select_event_type" placeholder="Select event type"></div>		
+-->
 	<div class="details-panel k-content">
-		
-	</div>
-</div>
-
-<div class="secrets">
-	<div id="trial_duration">
+		<div id="trial_duration">
 		<label class="info">Trial Duration</label><br />
 		&nbsp;&nbsp;<input type="text" name="duration" value="{{default_duration}}"
 		 placeholder="0.0" class="k-input" /> seconds <br />
 		&nbsp;&nbsp;<button class="k-button" onclick="set_trialDuration()">Set</button>
+	</div>
+	<div id="interval_details">
+		<input id="select_interval_type" placeholder="Select interval type" />
+		
+		<div class="prop_details"></div>
+		<button class="k-button" name="go"></button>
+	</div>
+	<div id="event_details">
+		<input id="select_event_type" placeholder="Select event type">
+		
+		<div class="prop_details"></div>
+		<button class="k-button" name="go"></button>
+	</div>
 	</div>
 </div>
 

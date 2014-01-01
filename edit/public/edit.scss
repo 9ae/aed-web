@@ -56,8 +56,29 @@ body{
   position:relative;
   float:left;
   overflow:auto;
-}
-
+  
+  div {
+    display:none;
+    
+    div.prop_details{
+      display:block;
+      padding-top:10px;
+      
+      label {
+        display:inline-block;
+        clear:left;
+      }
+      
+      input,select {
+        display:inline-block;
+        clear:right;
+        margin-left:5px;
+      }
+    }
+  }
+  
+  }
+  
 }
 
 .secrets{

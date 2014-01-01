@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 import models
 from decadence import json_encode_decimal
-from perform.helpers import cereal
+from perform.helpers import cereal, import_mod_file
 
 
 # from perform.helpers import cereal
@@ -90,10 +90,18 @@ def intervals_listview(request,protocol_id):
 def make_experiment(request,paradigm_id):
 	pid = int(paradigm_id)
 	paradigm = models.Paradigm.objects.get(id=pid)
+	
 	duration = request.POST.get('duration',10)
+	name = request.POST.get('name',paradigm.name)
 	duration = Decimal(duration)
-	protocol = models.Protocol(paradigm=paradigm, name=paradigm.name, trial_duration=duration)
+	
+	paradigm_mod = import_mod_file(paradigm.file_location)
+	paradigm_obj = eval('paradigm_mod.'+paradigm.name+'()')
+	content = paradigm_obj.json()
+	
+	protocol = models.Protocol(paradigm=paradigm, name=name, trial_duration=duration)
 	protocol.save()
-	content = {'protocol_id':protocol.pk}
+	content['protocol_id'] = protocol.pk
+	
 	s = simplejson.dumps(content)
 	return HttpResponse(s,content_type="application/json")
