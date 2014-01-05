@@ -43,10 +43,11 @@ def millisec(t):
 
 class Medea(object):
 	def __init__(self):
-		self.json = {'errors':[],'content':{}}
+		self.json = {'errors':[],'content':{},'success':True}
 		
 	def addError(self,msg):
 		self.json['errors'].append(msg)
+		success = False
 	
 	def noErrors(self):
 		return len(self.json['errors'])==0

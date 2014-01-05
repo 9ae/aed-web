@@ -2,7 +2,11 @@
 var sysvars = {
 	default_paradigm_id:1,
 	protocol_id:0,
-	paradigm_types: {}
+	paradigm_types: {},
+	pps : 1,
+	paddingTop:40,
+	paddingLeft:5,
+	paddingRight:30
 };
 
 function array2map(list,fun){
@@ -46,7 +50,7 @@ function makeNewProtocol(paradigm_id){
 	if(paradigm_id===undefined){
 		paradigm_id = sysvars.default_paradigm_id;
 	}
-	var url = '/edit/paradigm/'+paradigm_id+'/make_experiment';
+	var url = '/edit/paradigm/'+paradigm_id+'/make_protocol';
 	var duration = $('input[name="duration"]').val();
 	$.post(url,{'duration':duration}, function(data){
 		sysvars.protocol_id = data.protocol_id;
@@ -100,7 +104,12 @@ function set_trialDuration(){
 		//set graph
 		set_PixelsPerSecond(duration);
 		//end to db
-				
+		$.post('/edit/protocol/'+sysvars.protocol_id+'/set_trial_duration',{'duration':duration},
+		function(data){
+			if(!data.success){
+				alert(data.errors[0]);
+			}
+		})		
 		clearInDetails();
 	}
 }
@@ -154,8 +163,8 @@ function save_newEvent(evt){
 function set_PixelsPerSecond(duration){
 	d3.select('#timeline').remove();
 	var w = $('#flow').width();
-	var pps = w / duration;
-	var sc = d3.time.scale().domain([0,duration*1000]).range([0,w-30]);
+	sysvars.pps = w / duration;
+	var sc = d3.time.scale().domain([0,duration*1000]).range([0,w-sysvars.paddingRight]);
 	//var sc = d3.scale.linear().domain([0,duration]).range([0,w-30]);
 	var ax = d3.svg.axis().scale(sc).orient('top');
 	d3.select('#flow')
@@ -163,7 +172,7 @@ function set_PixelsPerSecond(duration){
 		.attr('height',400)
 		.append('g')
 			.attr('id','timeline')
-			.attr("transform", "translate(5,25)")
+			.attr("transform", "translate("+sysvars.paddingLeft+","+sysvars.paddingTop+")")
 			.attr('class','axis')
 			.style({'font-size':'0.5em','stroke-width':1})
 			.call(ax);

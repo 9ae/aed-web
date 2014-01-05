@@ -8,10 +8,11 @@ from django.shortcuts import render
 from django.utils import simplejson
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
+from django.core.exceptions import ObjectDoesNotExist
 
 import models
 from decadence import json_encode_decimal
-from perform.helpers import cereal, import_mod_file
+from perform.helpers import cereal, import_mod_file, Medea
 
 
 # from perform.helpers import cereal
@@ -87,7 +88,7 @@ def intervals_listview(request,protocol_id):
 	return render(request,'intervals.html',content)
 
 @csrf_exempt
-def make_experiment(request,paradigm_id):
+def make_protocol(request,paradigm_id):
 	pid = int(paradigm_id)
 	paradigm = models.Paradigm.objects.get(id=pid)
 	
@@ -105,3 +106,21 @@ def make_experiment(request,paradigm_id):
 	
 	s = simplejson.dumps(content)
 	return HttpResponse(s,content_type="application/json")
+
+@csrf_exempt
+def set_trial_duration(request,protocol_id):
+	m = Medea()
+	pid = int(protocol_id)
+	duration = request.POST.get('duration',None)
+	if duration==None:
+		m.addError('Trial duration not defined')
+		return HttpResponse(m.serialize(),content_type="application/json")
+	duration = Decimal(duration)
+	try:
+		protocol = models.Protocol.objects.get(id=pid)
+		protocol.trial_duration = duration
+		protocol.save()
+		return HttpResponse(m.serialize(),content_type="application/json")
+	except ObjectDoesNotExist:
+		m.addError('Protocol ID not found')
+		return HttpResponse(m.serialize(),content_type="application/json")
