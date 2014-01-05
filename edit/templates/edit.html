@@ -15,6 +15,8 @@
 <script src="/static/js/kendo.window.min.js"></script>
 <script src="/static/js/kendo.list.min.js"></script>
 <script src="/static/js/kendo.combobox.min.js"></script>
+<script src="/static/js/kendo.slider.min.js"></script>
+<script src="/static/js/kendo.colorpicker.min.js"></script>
 <script src="/static/d3/d3.v3.js" charset="utf-8"></script>
 <script src="/static/helpers.js"></script>
 <script type="text/javascript" src="/static/edit.js"></script>
@@ -70,13 +72,25 @@
 	</div>
 	<div id="interval_details">
 		<input id="select_interval_type" placeholder="Select interval type" />
-		
+
+		<br />
+		<label for="interval_name">Name</label>
+		<input type="text" id="interval_name" class="k-input" /> <br />
+		<label for="interval_duration">Duration</label>
+		<input type="text" id="interval_duration" class="k-input" value="0.0" /> seconds <br />
+		<div class="color-field">
+		<label for="interval_color">Color</label>
+		<input id="interval_color" />
+		</div>
 		<div class="prop_details"></div>
 		<button class="k-button" name="go"></button>
 	</div>
 	<div id="event_details">
 		<input id="select_event_type" placeholder="Select event type">
-		
+		<div class="color-field">
+		<label for="event_color">Color</label>
+		<input id="event_color" />
+		</div>
 		<div class="prop_details"></div>
 		<button class="k-button" name="go"></button>
 	</div>

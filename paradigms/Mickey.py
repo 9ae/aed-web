@@ -21,6 +21,12 @@ class Mickey(aedsdk.Paradigm):
 		def detect(self):
 			return self.exe.check_emulate_action('LeverPress')
 		
+		@classmethod
+		def json(cls):
+			result = super(Mickey.LeverPress,cls).json()
+			result['color'] = '0000ff'
+			return result
+		
 	
 	class Reward(aedsdk.Event):
 		def __init__(self):
@@ -40,6 +46,7 @@ class Mickey(aedsdk.Paradigm):
 		def json(cls):
 			result = super(Mickey.Reward,cls).json()
 			result['props'].append({'name':'valve','type':'INT'})
+			result['color'] = 'ff0000'
 			return result
 		
 	class Restart(aedsdk.Event):
@@ -48,6 +55,12 @@ class Mickey(aedsdk.Paradigm):
 		
 		def perform(self,time=None):
 			self.exe.new_trial()
+		
+		@classmethod
+		def json(cls):
+			result = super(Mickey.Restart,cls).json()
+			result['color'] = '00ff00'
+			return result
 	
 	class Wait(aedsdk.Interval):   
 		def __init__(self,  duration=0.0):
@@ -84,6 +97,7 @@ class Mickey(aedsdk.Paradigm):
 		def json(cls):
 			result = super(Mickey.Wait,cls).json()
 			result['props'].append({'name':'varyby','type':'DEC','default':0.0})
+			result['color'] = 'ededed'
 			return result
 				
 			
@@ -116,6 +130,7 @@ class Mickey(aedsdk.Paradigm):
 		def json(cls):
 			result = super(Mickey.Tone,cls).json()
 			result['props'].append({'name':'varyby','type':'DEC','default':0.0})
+			result['color'] = '99FF99'
 			return result	
 	
 	class Present(aedsdk.Interval):
@@ -153,6 +168,7 @@ class Mickey(aedsdk.Paradigm):
 		def json(cls):
 			result = super(Mickey.Present,cls).json()
 			result['props'].append({'name':'varyby','type':'DEC','default':0.0})
+			result['color'] = 'FF99CC'
 			return result
 	
 	class Refrain(aedsdk.Interval):
@@ -195,4 +211,5 @@ class Mickey(aedsdk.Paradigm):
 		def json(cls):
 			result = super(Mickey.Refrain,cls).json()
 			result['props'].append({'name':'varyby','type':'DEC','default':0.0})
+			result['color'] = 'FFFF99'
 			return result	

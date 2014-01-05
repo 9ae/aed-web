@@ -1,6 +1,7 @@
 # Create your views here.
 
 from decimal import Decimal
+import json
 
 from django.http import HttpResponse
 from django.template import RequestContext, loader
@@ -124,3 +125,39 @@ def set_trial_duration(request,protocol_id):
 	except ObjectDoesNotExist:
 		m.addError('Protocol ID not found')
 		return HttpResponse(m.serialize(),content_type="application/json")
+	
+@csrf_exempt
+def new_interval(request,protocol_id):
+	m = Medea()
+	pid = int(protocol_id)
+	protocol = None
+	try:
+		protocol = models.Protocol.objects.get(id=pid)
+	except ObjectDoesNotExist:
+		m.addError('Protocol ID not found')
+		return HttpResponse(m.serialize(),content_type="application/json")
+	itype = request.POST.get('type',None)
+	if itype==None:
+		m.addError('Interval type must be specified')
+		return HttpResponse(m.serialize(),content_type="application/json")
+	iname = request.POST.get('name',itype);
+	iduration = request.POST.get('duration','0.0')
+	iduration = Decimal(iduration)
+	icolor = request.POST.get('color','000000')
+	iprops = request.POST.get('props',None)
+	iprops = json.loads(iprops)
+	
+	iorder = models.Interval.objects.filter(protocol=protocol).count() + 1
+	
+	interval = models.Interval(protocol=protocol,order=iorder,type=itype,duration=iduration,name=iname,color=icolor)
+	interval.save()
+		
+	for i in range(0,len(iprops)):
+		p = iprops[i]
+		prop = models.AIEProperty(prop_type=p['type'],prop_name=p['name'])
+		prop.set(p['value'])
+		prop.save()
+		interval.props.add(prop)
+	
+	m.addContent('interval_id', interval.pk)
+	return HttpResponse(m.serialize(),content_type="application/json")

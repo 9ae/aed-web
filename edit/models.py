@@ -20,6 +20,19 @@ class AIEProperty(models.Model):
 		else:
 			return None
 	
+	def set(self,value):
+		if self.prop_type=='INT':
+			self.prop_val_int = value
+		elif self.prop_type=='STR':
+			self.prop_val_str = value
+		elif self.prop_type=='BOO':
+			self.prop_val_boo = value
+		elif self.prop_type=='DEC':
+			self.prop_val_dec = value
+		else:
+			pass
+		
+	
 	def __unicode__(self):
 		return u'%d. %s = %s'%(self.id, self.prop_name, self.val())
 

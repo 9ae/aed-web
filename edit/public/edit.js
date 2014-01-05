@@ -6,7 +6,13 @@ var sysvars = {
 	pps : 1,
 	paddingTop:40,
 	paddingLeft:5,
-	paddingRight:30
+	paddingRight:30,
+	intervals : [],
+};
+
+var toolbox = {
+	timeOffset : 0.0
+	
 };
 
 function array2map(list,fun){
@@ -56,10 +62,10 @@ function makeNewProtocol(paradigm_id){
 		sysvars.protocol_id = data.protocol_id;
 	//	delete sysvars.paradigm_types['protocol_id'];
 		
-		$("#select_interval_type").kendoComboBox({ dataTextField:"type", dataValueField: "type",
-          dataSource: data.intervals, select: select_intervalType});
-       	$('#select_event_type').kendoComboBox({ dataTextField:"type", dataValueField: "type",
-          dataSource: data.events, select: select_eventType});
+		toolbox.interval_typeselect = $("#select_interval_type").kendoComboBox({ dataTextField:"type", dataValueField: "type",
+          dataSource: data.intervals, select: select_intervalType}).data("kendoComboBox");
+       	toolbox.event_typeselect = $('#select_event_type').kendoComboBox({ dataTextField:"type", dataValueField: "type",
+          dataSource: data.events, select: select_eventType}).data("kendoComboBox");
           
         sysvars.paradigm_types = {};
 		sysvars.paradigm_types['actions'] = array2map(data.actions,mapByType);
@@ -101,15 +107,16 @@ function set_trialDuration(){
 	if(isNaN(duration)){
 		alert("Entered duration is not a number");
 	} else {
-		//set graph
-		set_PixelsPerSecond(duration);
 		//end to db
 		$.post('/edit/protocol/'+sysvars.protocol_id+'/set_trial_duration',{'duration':duration},
 		function(data){
 			if(!data.success){
 				alert(data.errors[0]);
 			}
-		})		
+		});
+		//set graph
+		set_PixelsPerSecond(duration);
+		//TODO: update existing intervals		
 		clearInDetails();
 	}
 }
@@ -118,12 +125,18 @@ function select_intervalType(e){
 	var item = e.item;
     var text = item.text();
     populate_propsPanel(sysvars.paradigm_types.intervals[text].props,'#interval_details');
+    $('#interval_details div.color-field').show();
+    var c = kendo.parseColor('#'+sysvars.paradigm_types.intervals[text].color);
+    toolbox.interval_colorpicker.value(c); 
 }
 
 function select_eventType(e){
 	var item = e.item;
     var text = item.text();
     populate_propsPanel(sysvars.paradigm_types.events[text].props,'#event_details');
+    $('#event_details div.color-field').show();
+    var c = kendo.parseColor('#'+sysvars.paradigm_types.events[text].color);
+    toolbox.event_colorpicker.value(c); 
 }
 
 function populate_propsPanel(props,parentSelector){
@@ -150,12 +163,36 @@ function populate_propsPanel(props,parentSelector){
 }
 
 function save_newInterval(evt){
-	var type = $('#select_interval_type').data("kendoComboBox").value();
-	
+	var postbody = {};
+	postbody.type = toolbox.interval_typeselect.value();
+	postbody.color = toolbox.interval_colorpicker.value();
+	postbody.color = postbody.color.replace('#','');
+	postbody.name = $('#interval_name').val();
+	postbody.duration = $('#interval_duration').val();
+	var props = [];
+	$('#interval_details div.prop_details input').each(function(){
+		var obj = {};
+		obj.name = $(this).attr('name');
+		obj.type = $(this).attr('data-type');
+		obj.value = $(this).val();
+		props.push(obj);
+	});
+	postbody.props = JSON.stringify(props);
+	//var listener = makeListener_new_interval(postbody);
+	$.post('/edit/protocol/'+sysvars.protocol_id+'/new_interval',postbody, function(data){
+			if(!data.success){
+				alert(data.errors[0]);
+			} else {
+				var stuff = postbody;
+				stuff.id = data.content.interval_id
+				sysvars.intervals.push(stuff);
+				draw_interval(stuff);
+			}
+		});
 }
 
 function save_newEvent(evt){
-	var type = $('#select_event_type').data("kendoComboBox").value();	
+	var type = toolbox.event_typeselect.value();	
 }
 
 /* Graph functions */
@@ -178,6 +215,18 @@ function set_PixelsPerSecond(duration){
 			.call(ax);
 }
 
+function draw_interval(properties){
+	var duration = parseFloat(properties.duration);
+	var offset = sysvars.paddingLeft+sysvars.pps*toolbox.timeOffset;
+	d3.select('#flow').append('rect')
+		.attr('width',sysvars.pps*duration)
+		.attr('height',100)
+		.attr('transform','translate('+offset+','+sysvars.paddingTop+')' )
+		.attr('fill','#'+properties.color);
+		console.log(properties.color);
+	toolbox.timeOffset += duration;
+}
+
 window.onload = function() {
 	makeNewProtocol();
 	
@@ -187,4 +236,11 @@ window.onload = function() {
 	cssExpandWidthUntilEnd('.details-panel');
 	$("#menu").kendoMenu();
 	set_trialDuration();
+	
+	toolbox.interval_colorpicker = $("#interval_color").kendoColorPicker({
+            value: "#ffffff"
+        }).data("kendoColorPicker");
+    toolbox.event_colorpicker = $("#event_color").kendoColorPicker({
+            value: "#ffffff"
+        }).data("kendoColorPicker");
 };

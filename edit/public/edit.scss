@@ -60,6 +60,10 @@ body{
   div {
     display:none;
     
+    .color-field{
+      display:none;
+    }
+    
     div.prop_details{
       display:block;
       padding-top:10px;
