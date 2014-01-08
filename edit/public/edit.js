@@ -157,9 +157,29 @@ function populate_propsPanel(props,parentSelector){
 		if(obj['default']!==undefined){
 			input.attr('value',obj['default']);
 		}
+		if(obj['value']!==undefined){
+			input.attr('value',obj['value']);
+		}
 		panel.append(label);
 		input.insertAfter(label);
 	}
+}
+
+function make_IntervalListener(stuff){
+	return function(data){
+		toolbox.interval_typeselect.value(stuff.type);
+		$('#interval_name').val(stuff.name);
+		$('#interval_duration').val(stuff.duration);
+		toolbox.interval_colorpicker.value(stuff.color);
+		populate_propsPanel(stuff.props,'#interval_details');
+		$('#interval_details button[name="go"]').unbind('click')
+											.text('Save')
+											.click(save_Interval);
+	}
+}
+
+function save_Interval(evt){
+	
 }
 
 function save_newInterval(evt){
@@ -185,14 +205,25 @@ function save_newInterval(evt){
 			} else {
 				var stuff = postbody;
 				stuff.id = data.content.interval_id
-				sysvars.intervals.push(stuff);
-				draw_interval(stuff);
+				var ival = draw_interval(stuff);
+				stuff.props = $.parseJSON(stuff.props);
+				var ilisten = make_IntervalListener(stuff);
+				ival.on('click',ilisten);
+				clearIntervalFields()
 			}
 		});
 }
 
 function save_newEvent(evt){
 	var type = toolbox.event_typeselect.value();	
+}
+
+function clearIntervalFields(){
+	toolbox.interval_typeselect.text('');
+	$('#interval_name').val('');
+	$('#interval_duration').val('');
+	toolbox.interval_colorpicker.value('#FFFFFF');
+	$('#interval_details div.prop_details').html('');
 }
 
 /* Graph functions */
@@ -218,13 +249,13 @@ function set_PixelsPerSecond(duration){
 function draw_interval(properties){
 	var duration = parseFloat(properties.duration);
 	var offset = sysvars.paddingLeft+sysvars.pps*toolbox.timeOffset;
-	d3.select('#flow').append('rect')
+	var result = d3.select('#flow').append('rect')
 		.attr('width',sysvars.pps*duration)
 		.attr('height',100)
 		.attr('transform','translate('+offset+','+sysvars.paddingTop+')' )
 		.attr('fill','#'+properties.color);
-		console.log(properties.color);
 	toolbox.timeOffset += duration;
+	return result;
 }
 
 window.onload = function() {
