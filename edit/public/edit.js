@@ -7,12 +7,18 @@ var sysvars = {
 	paddingTop:40,
 	paddingLeft:5,
 	paddingRight:30,
-	intervals : [],
 };
 
 var toolbox = {
-	timeOffset : 0.0
-	
+	timeOffset : 0.0,
+	seleted_intervalId:0,
+};
+
+// protocol data. stored in json
+var protocol = {
+	trial_duration:0.0,
+	intervals: {},
+	actions: {}
 };
 
 function array2map(list,fun){
@@ -46,6 +52,75 @@ function mapByType(item){
 	return [key,value];
 }
 
+function clone(obj) {
+    if (null == obj || "object" != typeof obj) return obj;
+    var copy = obj.constructor();
+    for (var attr in obj) {
+        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
+    }
+    return copy;
+}
+
+function findProp(props, name){
+    var len = props.length;
+    var result = null;
+    for(var i=0; i<len; i++){
+        if(props[i]['name']===name){
+            result = props[i];
+            break;
+        }
+    }
+    return result;
+}
+
+function findPropIndex(props, name){
+    var len = props.length;
+    var result = -1;
+    for(var i=0; i<len; i++){
+        if(props[i]['name']===name){
+            result = i;
+            break;
+        }
+    }
+    return result;
+}
+
+function findPropValue(props, name){
+    var len = props.length;
+    var result = null;
+    for(var i=0; i<len; i++){
+        if(props[i]['name']===name){
+            result = props[i]['value'];
+            break;
+        }
+    }
+    return result;
+}
+
+function checkAgainstTrialDuration(intervals, trial_duration){
+    var total_time = 0.0;
+    for(var i in intervals){
+        var ival = intervals[i];
+        var varyby = findPropValue(ival.props,'varyby');
+        if(varyby===null){
+            varyby = 0.0;
+        } else {
+        	varyby = parseFloat(varyby);
+        }
+        total_time += (parseFloat(ival.duration)+varyby);        
+    }
+    return (total_time<=trial_duration);
+}
+
+function matchIdsWithNames(props,map){
+	var len = props.length;
+	for(var i=0; i<len; i++){
+		var name = props[i]['name'];
+		props[i]['id'] = map[name];
+	}
+	return props;
+}
+
 /* Menu functions */
 
 function edit_trialDuration(){
@@ -71,7 +146,9 @@ function makeNewProtocol(paradigm_id){
 		sysvars.paradigm_types['actions'] = array2map(data.actions,mapByType);
 		sysvars.paradigm_types['events'] = array2map(data.events,mapByType);
 		sysvars.paradigm_types['intervals'] = array2map(data.intervals,mapByType);
+		set_trialDuration();
 	});
+	protocol.trial_duration = parseFloat(duration);
 }
 
 /* Button functions */
@@ -106,7 +183,10 @@ function set_trialDuration(){
 	duration = parseFloat(duration);
 	if(isNaN(duration)){
 		alert("Entered duration is not a number");
-	} else {
+	} else if(!checkAgainstTrialDuration(protocol.intervals,duration)) {
+		alert('The sum of all interval durations cannot exceed trial duration');
+	}
+	 else {
 		//end to db
 		$.post('/edit/protocol/'+sysvars.protocol_id+'/set_trial_duration',{'duration':duration},
 		function(data){
@@ -114,9 +194,10 @@ function set_trialDuration(){
 				alert(data.errors[0]);
 			}
 		});
+		protocol.trial_duration = duration;
 		//set graph
 		set_PixelsPerSecond(duration);
-		//TODO: update existing intervals		
+		redraw_all();	
 		clearInDetails();
 	}
 }
@@ -165,9 +246,12 @@ function populate_propsPanel(props,parentSelector){
 	}
 }
 
-function make_IntervalListener(stuff){
+function make_IntervalListener(id){
 	return function(data){
+		toolbox.seleted_intervalId = id;
+		var stuff = protocol.intervals[id];
 		toolbox.interval_typeselect.value(stuff.type);
+		toolbox.interval_typeselect.enable(false);
 		$('#interval_name').val(stuff.name);
 		$('#interval_duration').val(stuff.duration);
 		toolbox.interval_colorpicker.value(stuff.color);
@@ -175,18 +259,106 @@ function make_IntervalListener(stuff){
 		$('#interval_details button[name="go"]').unbind('click')
 											.text('Save')
 											.click(save_Interval);
+		$('#interval_details').show();
+	}
+}
+
+function applyChanges(delta){
+	for(var key in delta){
+		if(key==='id'){continue; }
+		else if (key==='props'){
+			var props = $.parseJSON(delta['props']);
+			var len = props.length;
+			for(var i=0; i<len; i++){
+				var p = findProp(this.props,props[i].name);
+				p.value = props[i].value;
+			}
+		} else {
+			this[key] = delta[key];
+		}
 	}
 }
 
 function save_Interval(evt){
+	var stuff = clone(protocol.intervals[toolbox.seleted_intervalId]);
 	
+	var timesChanged = false;
+	var durationKeep = false;
+	if ($('#interval_name').val() !== stuff.name) {
+		stuff.name = $('#interval_name').val();
+	} else {
+		delete stuff.name;
+	}
+	if (toolbox.interval_colorpicker.value() !== stuff.color) {
+		stuff.color = toolbox.interval_colorpicker.value();
+	} else {
+		delete stuff.color;
+	}
+
+	if ($('#interval_duration').val() !== stuff.duration) {
+		timesChanged = true;
+		stuff.duration = $('#interval_duration').val();
+	} else {
+		durationKeep = true;
+	}
+
+	var varyByKeep = false;
+	$('#interval_details div.prop_details input').each(function() {
+		var name = $(this).attr('name');
+		var varybyObj = findProp(stuff.props, name);
+		if ($(this).val() !== varybyObj.value) {
+			varybyObj.value = $(this).val();
+			if (name === 'varyby') {
+				timesChanged = true;
+			}
+		} else {
+			if (name === 'varyby') {
+				varyByKeep = true;
+			 } else{
+				var ind = findPropIndex(stuff.props, name);
+				stuff.props.splice(ind, 1);
+			}
+		}
+	});
+	
+	var timesOkay = true;
+	if (timesChanged){
+		var intervals = clone(protocol.intervals);
+		intervals[stuff.id] = stuff;
+		timesOkay = checkAgainstTrialDuration(intervals, protocol.trial_duration);
+		if(varyByKeep){
+			var ind = findPropIndex(stuff.props, 'varyby');
+			stuff.props.splice(ind, 1);
+		}
+		if(durationKeep){
+			delete stuff.duration;
+		}
+	}
+
+	if (timesOkay) {
+		delete stuff.type;
+		//do post
+		stuff.props = JSON.stringify(stuff.props);
+		stuff.pps = sysvars.pps;
+		$.post('/edit/interval/'+stuff.id+'/edit',stuff,function(data){
+			if(data.success){
+				applyChanges.call(protocol.intervals[toolbox.seleted_intervalId],stuff);
+				clearIntervalFields();
+				redraw_interval(stuff,data.content.graphOffsets);
+			} else {
+				alert(data.errors[0]);		
+			}
+		});
+	} else {
+		alert('The sum of all interval durations cannot exceed trial duration');
+	}		
 }
+
 
 function save_newInterval(evt){
 	var postbody = {};
 	postbody.type = toolbox.interval_typeselect.value();
 	postbody.color = toolbox.interval_colorpicker.value();
-	postbody.color = postbody.color.replace('#','');
 	postbody.name = $('#interval_name').val();
 	postbody.duration = $('#interval_duration').val();
 	var props = [];
@@ -197,21 +369,29 @@ function save_newInterval(evt){
 		obj.value = $(this).val();
 		props.push(obj);
 	});
-	postbody.props = JSON.stringify(props);
-	//var listener = makeListener_new_interval(postbody);
-	$.post('/edit/protocol/'+sysvars.protocol_id+'/new_interval',postbody, function(data){
-			if(!data.success){
-				alert(data.errors[0]);
-			} else {
-				var stuff = postbody;
-				stuff.id = data.content.interval_id
-				var ival = draw_interval(stuff);
-				stuff.props = $.parseJSON(stuff.props);
-				var ilisten = make_IntervalListener(stuff);
-				ival.on('click',ilisten);
-				clearIntervalFields()
-			}
-		});
+	var intervals = clone(protocol.intervals);
+	postbody.props = props;
+	intervals['new'] = postbody;
+	if(checkAgainstTrialDuration(intervals, protocol.trial_duration)){
+		postbody.props = JSON.stringify(postbody.props);
+		$.post('/edit/protocol/'+sysvars.protocol_id+'/new_interval',postbody, function(data){
+				if(data.success){
+					var stuff = postbody;
+					stuff.id = data.content.interval_id
+					var ival = draw_interval(stuff);
+					stuff.props = matchIdsWithNames(props,data.content.prop_ids);
+					protocol.intervals[stuff.id] = stuff;
+					var ilisten = make_IntervalListener(stuff.id);
+					ival.on('click',ilisten);
+					ival.attr('id','rect'+stuff.id);
+					clearIntervalFields();
+				} else {
+					alert(data.errors[0]);
+				}
+			});
+	} else {
+		alert('The sum of all interval durations cannot exceed trial duration');
+	}
 }
 
 function save_newEvent(evt){
@@ -220,10 +400,12 @@ function save_newEvent(evt){
 
 function clearIntervalFields(){
 	toolbox.interval_typeselect.text('');
+	toolbox.interval_typeselect.enable(true);
 	$('#interval_name').val('');
 	$('#interval_duration').val('');
 	toolbox.interval_colorpicker.value('#FFFFFF');
 	$('#interval_details div.prop_details').html('');
+	$('#interval_details').hide();
 }
 
 /* Graph functions */
@@ -253,9 +435,30 @@ function draw_interval(properties){
 		.attr('width',sysvars.pps*duration)
 		.attr('height',100)
 		.attr('transform','translate('+offset+','+sysvars.paddingTop+')' )
-		.attr('fill','#'+properties.color);
+		.attr('fill',properties.color);
 	toolbox.timeOffset += duration;
 	return result;
+}
+
+function redraw_interval(properties,moveMap){
+	var rect = d3.select('#rect'+properties.id);
+	if(properties.color!==undefined){
+		rect.attr('fill',properties.color);
+	}
+	if(properties.duration!==undefined){
+		var duration = parseFloat(properties.duration);
+		rect.attr('width',sysvars.pps*duration);
+		
+		for(var keyid in moveMap){
+			var sibling = $('#'+keyid);
+			var offset = sysvars.paddingLeft+parseFloat(moveMap[keyid]);
+			sibling.attr('transform', 'translate('+offset+','+sysvars.paddingTop+')')
+		}
+	}
+}
+
+function redraw_all(){
+$('#flow rect').remove();	
 }
 
 window.onload = function() {
@@ -266,8 +469,7 @@ window.onload = function() {
 	cssExpandHeightUntilEnd('.details-panel');
 	cssExpandWidthUntilEnd('.details-panel');
 	$("#menu").kendoMenu();
-	set_trialDuration();
-	
+
 	toolbox.interval_colorpicker = $("#interval_color").kendoColorPicker({
             value: "#ffffff"
         }).data("kendoColorPicker");

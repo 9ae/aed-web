@@ -10,6 +10,7 @@ from django.utils import simplejson
 from django.core import serializers
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Sum
 
 import models
 from decadence import json_encode_decimal
@@ -144,6 +145,8 @@ def new_interval(request,protocol_id):
 	iduration = request.POST.get('duration','0.0')
 	iduration = Decimal(iduration)
 	icolor = request.POST.get('color','000000')
+	if len(icolor)==7:
+		icolor = icolor[1:]
 	iprops = request.POST.get('props',None)
 	iprops = json.loads(iprops)
 	
@@ -151,13 +154,67 @@ def new_interval(request,protocol_id):
 	
 	interval = models.Interval(protocol=protocol,order=iorder,type=itype,duration=iduration,name=iname,color=icolor)
 	interval.save()
-		
+	
+	names_id_map = {}	
 	for i in range(0,len(iprops)):
 		p = iprops[i]
 		prop = models.AIEProperty(prop_type=p['type'],prop_name=p['name'])
 		prop.set(p['value'])
 		prop.save()
 		interval.props.add(prop)
+		names_id_map[prop.prop_name] = prop.pk
 	
 	m.addContent('interval_id', interval.pk)
+	m.addContent('prop_ids',names_id_map)
+	return HttpResponse(m.serialize(),content_type="application/json")
+
+@csrf_exempt
+def edit_interval(request,interval_id):
+	m = Medea()
+	iid = int(interval_id)
+	interval = None
+	try:
+		interval = models.Interval.objects.get(id=iid)
+	except ObjectDoesNotExist:
+		m.addError('Interval ID not found')
+		return HttpResponse(m.serialize(),content_type="application/json")
+	
+	iname = request.POST.get('name',None)
+	if iname!=None:
+		interval.name = iname
+	
+	iduration = request.POST.get('duration',None)
+	if iduration!=None:
+		interval.duration = Decimal(iduration)
+	
+	icolor = request.POST.get('color',None)
+	if icolor!=None:
+		if len(icolor)==7:
+			icolor = icolor[1:]
+		interval.color = icolor
+	
+	interval.save()
+	
+	iprops = request.POST.get('props',[])
+	iprops = json.loads(iprops)
+		
+	for i in range(0,len(iprops)):
+		p = iprops[i]
+		prop = models.AIEProperty.objects.get(id=p['id'])
+		prop.set(p['value'])
+		prop.save()
+	
+	# calculate offsets
+	pps = request.POST.get('pps',1.0)
+	pps = Decimal(pps)
+	sumresult = models.Interval.objects.filter(protocol_id__exact=interval.protocol.pk, order__lte=interval.order).aggregate(Sum('duration'))
+	sofar = sumresult['duration__sum']
+	sofar = sofar*pps
+	ivals_after = models.Interval.objects.filter(protocol_id__exact=interval.protocol.pk, order__gt=interval.order)
+	offsetMap = {}
+	for poi in ivals_after:
+		offsetMap['rect'+str(poi.pk)] = str(sofar)
+		sofar = sofar + (poi.duration*pps)
+
+	m.addContent('graphOffsets',offsetMap)	
 	return HttpResponse(m.serialize(),content_type="application/json")

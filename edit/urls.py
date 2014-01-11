@@ -11,4 +11,5 @@ urlpatterns = patterns('',
 	url(r'^paradigm/(?P<paradigm_id>\d+)/make_protocol$',views.make_protocol),
 	url(r'^protocol/(?P<protocol_id>\d+)/set_trial_duration$', views.set_trial_duration),
 	url(r'^protocol/(?P<protocol_id>\d+)/new_interval$', views.new_interval),
+	url(r'^interval/(?P<interval_id>\d+)/edit$', views.edit_interval),
 )
