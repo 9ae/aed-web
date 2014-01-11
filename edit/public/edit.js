@@ -11,13 +11,14 @@ var sysvars = {
 
 var toolbox = {
 	timeOffset : 0.0,
-	seleted_intervalId:0,
+	selected_intervalId:-1,
+	selected_actionId:-1
 };
 
 // protocol data. stored in json
 var protocol = {
 	trial_duration:0.0,
-	intervals: {},
+	intervals: [],
 	actions: {}
 };
 
@@ -59,6 +60,44 @@ function clone(obj) {
         if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
     }
     return copy;
+}
+
+function findByKey(key,value){
+	var len = this.length;
+	var result = null;
+	for(var i=0; i<len; i++){
+        if(this[i][key]===value){
+            result = this[i];
+            break;
+        }
+    }
+    return result;
+}
+
+function findIndexByKey(key,value){
+    var len = this.length;
+    var result = -1;
+    for(var i=0; i<len; i++){
+        if(this[i][key]===value){
+            result = i;
+            break;
+        }
+    }
+    return result;
+}
+
+function removeByKey(key,value){
+    var len = this.length;
+    var result = -1;
+    for(var i=0; i<len; i++){
+        if(this[i][key]===value){
+            result = i;
+            break;
+        }
+    }
+    if(result>=0){
+    	this.splice(result,1);
+    }
 }
 
 function findProp(props, name){
@@ -167,6 +206,20 @@ function btn_newEvent(){
 											.click(save_newEvent);
 }
 
+function btn_delSelected(){
+	if(toolbox.selected_intervalId!==-1){
+		$.get('/edit/interval/'+toolbox.selected_intervalId+'/delete?pps='+sysvars.pps, function(data){
+			erase_interval(toolbox.selected_intervalId);
+			redraw_intervals_after(data.content.graphOffsets);
+			removeByKey.call(protocol.intervals,'id',toolbox.selected_intervalId);
+			toolbox.selected_intervalId = -1;
+		});
+	}
+	if(toolbox.selected_actiond!==-1){
+		
+	}
+}
+
 /*Panel functions */
 
 function loadInDetails(selector){
@@ -248,8 +301,8 @@ function populate_propsPanel(props,parentSelector){
 
 function make_IntervalListener(id){
 	return function(data){
-		toolbox.seleted_intervalId = id;
-		var stuff = protocol.intervals[id];
+		toolbox.selected_intervalId = id;
+		var stuff = findByKey.call(protocol.intervals,'id',id);
 		toolbox.interval_typeselect.value(stuff.type);
 		toolbox.interval_typeselect.enable(false);
 		$('#interval_name').val(stuff.name);
@@ -280,7 +333,7 @@ function applyChanges(delta){
 }
 
 function save_Interval(evt){
-	var stuff = clone(protocol.intervals[toolbox.seleted_intervalId]);
+	var stuff = clone(findByKey.call(protocol.intervals,'id',toolbox.selected_intervalId));
 	
 	var timesChanged = false;
 	var durationKeep = false;
@@ -342,13 +395,14 @@ function save_Interval(evt){
 		stuff.pps = sysvars.pps;
 		$.post('/edit/interval/'+stuff.id+'/edit',stuff,function(data){
 			if(data.success){
-				applyChanges.call(protocol.intervals[toolbox.seleted_intervalId],stuff);
+				applyChanges.call(findByKey.call(protocol.intervals,'id',toolbox.selected_intervalId),stuff);
 				clearIntervalFields();
 				redraw_interval(stuff,data.content.graphOffsets);
 			} else {
 				alert(data.errors[0]);		
 			}
 		});
+		toolbox.selected_intervalId = -1;
 	} else {
 		alert('The sum of all interval durations cannot exceed trial duration');
 	}		
@@ -380,7 +434,7 @@ function save_newInterval(evt){
 					stuff.id = data.content.interval_id
 					var ival = draw_interval(stuff);
 					stuff.props = matchIdsWithNames(props,data.content.prop_ids);
-					protocol.intervals[stuff.id] = stuff;
+					protocol.intervals.push(stuff);
 					var ilisten = make_IntervalListener(stuff.id);
 					ival.on('click',ilisten);
 					ival.attr('id','rect'+stuff.id);
@@ -448,17 +502,33 @@ function redraw_interval(properties,moveMap){
 	if(properties.duration!==undefined){
 		var duration = parseFloat(properties.duration);
 		rect.attr('width',sysvars.pps*duration);
-		
-		for(var keyid in moveMap){
-			var sibling = $('#'+keyid);
-			var offset = sysvars.paddingLeft+parseFloat(moveMap[keyid]);
-			sibling.attr('transform', 'translate('+offset+','+sysvars.paddingTop+')')
-		}
+		redraw_intervals_after(moveMap);
 	}
 }
 
+function redraw_intervals_after(moveMap){
+	for(var keyid in moveMap){
+		var sibling = $('#'+keyid);
+		var offset = sysvars.paddingLeft+parseFloat(moveMap[keyid]);
+		sibling.attr('transform', 'translate('+offset+','+sysvars.paddingTop+')')
+	}
+}
+
+function erase_interval(id){
+	d3.select('#rect'+id).remove();
+}
+
 function redraw_all(){
-$('#flow rect').remove();	
+	var offset = sysvars.paddingLeft;
+	var len = protocol.intervals.length;
+	for(var i=0; i<len; i++){
+		var ival = protocol.intervals[i];
+		var w = sysvars.pps*ival.duration;
+		d3.select('#rect'+ival.id)
+			.attr('width',w)
+			.attr('transform', 'translate('+offset+','+sysvars.paddingTop+')');
+		offset += w;
+	}
 }
 
 window.onload = function() {

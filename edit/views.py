@@ -218,3 +218,35 @@ def edit_interval(request,interval_id):
 
 	m.addContent('graphOffsets',offsetMap)	
 	return HttpResponse(m.serialize(),content_type="application/json")
+
+def delete_interval(request,interval_id):
+	m = Medea()
+	iid = int(interval_id)
+	interval = None
+	try:
+		interval = models.Interval.objects.get(id=iid)
+	except ObjectDoesNotExist:
+		m.addError('Interval ID not found')
+		return HttpResponse(m.serialize(),content_type="application/json")
+	
+	# TODO: disassocate actions
+	
+	pps = request.GET.get('pps',1.0)
+	pps = Decimal(pps)
+	sumresult = models.Interval.objects.filter(protocol_id__exact=interval.protocol.pk, order__lt=interval.order).aggregate(Sum('duration'))
+	sofar = sumresult['duration__sum']
+	if sofar==None:
+		sofar = Decimal('0.0')
+	sofar = sofar*pps
+	ivals_after = models.Interval.objects.filter(protocol_id__exact=interval.protocol.pk, order__gt=interval.order)
+	offsetMap = {}
+	for poi in ivals_after:
+		offsetMap['rect'+str(poi.pk)] = str(sofar)
+		sofar = sofar + (poi.duration*pps)
+		poi.order = poi.order - 1
+		poi.save()
+	m.addContent('graphOffsets',offsetMap)	
+	
+	interval.delete()
+	
+	return HttpResponse(m.serialize(),content_type="application/json")
