@@ -125,11 +125,14 @@ class Mickey(aedsdk.Paradigm):
 		def set_prop(self,name,val):
 			if name=="varyby":
 				self.varyby = Decimal(val)
+			if name=="freq":
+				self.freq = int(val)
 		
 		@classmethod
 		def json(cls):
 			result = super(Mickey.Tone,cls).json()
 			result['props'].append({'name':'varyby','type':'DEC','default':0.0})
+			result['props'].append({'name':'tone','type':'INT','default':1000,'min':1000, 'max':11160,'step':40})
 			result['color'] = '99FF99'
 			return result	
 	

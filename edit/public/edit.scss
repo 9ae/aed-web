@@ -68,15 +68,18 @@ body{
       display:block;
       padding-top:10px;
       
-      label {
-        display:inline-block;
-        clear:left;
-      }
-      
-      input,select {
-        display:inline-block;
-        clear:right;
-        margin-left:5px;
+      div.prop-row {
+        display:block;
+        label {
+          display:inline-block;
+          clear:left;
+        }
+        
+        input,select {
+          display:inline-block;
+          clear:right;
+          margin-left:5px;
+        }
       }
     }
   }

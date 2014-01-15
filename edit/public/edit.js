@@ -278,24 +278,44 @@ function populate_propsPanel(props,parentSelector){
 	panel.html('');
 	var propslen = props.length;
 	for(var i=0; i<propslen; i++){
+		var div = $('<div class="prop-row"></div>')
 		var obj = props[i];
 		var label = $('<label>'+obj.name+'</label>');
 		var ftype = "text";
 		if(obj.type==="BOO"){
-			ftype = "checkbox"
+			ftype = "checkbox";
+		}
+		var useSpinner = false;
+		if(obj.type==="INT"){
+			useSpinner = obj.step!==undefined;
+			if(useSpinner){
+				ftype="number";
+			}
 		}
 		var input = $('<input />',{	'type': ftype, 
 									'name': obj.name, 
 									'class':'k-input', 
-									'data-type':obj.type});
+									'data-type':obj.type});						
 		if(obj['default']!==undefined){
 			input.attr('value',obj['default']);
 		}
 		if(obj['value']!==undefined){
 			input.attr('value',obj['value']);
 		}
-		panel.append(label);
+		if(useSpinner){
+			input.attr('step', obj['step']);
+			var min = obj.min;
+			var max = obj.max;
+			if(min!==undefined){
+				input.attr('min',min);
+			}
+			if(max!==undefined){
+				input.attr('max',max);
+			}
+		}
+		div.append(label);
 		input.insertAfter(label);
+		panel.append(div);
 	}
 }
 

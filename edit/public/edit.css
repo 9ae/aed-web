@@ -47,16 +47,20 @@ body {
     overflow: auto; }
     .toolbox .details-panel div {
       display: none; }
+      .toolbox .details-panel div .color-field {
+        display: none; }
       .toolbox .details-panel div div.prop_details {
         display: block;
         padding-top: 10px; }
-        .toolbox .details-panel div div.prop_details label {
-          display: inline-block;
-          clear: left; }
-        .toolbox .details-panel div div.prop_details input, .toolbox .details-panel div div.prop_details select {
-          display: inline-block;
-          clear: right;
-          margin-left: 5px; }
+        .toolbox .details-panel div div.prop_details div.prop-row {
+          display: block; }
+          .toolbox .details-panel div div.prop_details div.prop-row label {
+            display: inline-block;
+            clear: left; }
+          .toolbox .details-panel div div.prop_details div.prop-row input, .toolbox .details-panel div div.prop_details div.prop-row select {
+            display: inline-block;
+            clear: right;
+            margin-left: 5px; }
 
 .secrets {
   display: hidden; }
