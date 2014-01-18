@@ -40,7 +40,7 @@
 		</li>			
 		<li>Edit
 			<ul>
-				<li onclick="edit_trialDuration()">Trial Duration</li>
+				<li onclick="Durations.edit_trialDuration()">Trial Duration</li>
 				<li>Protocol Name</li>
 			</ul>
 		</li>
@@ -56,9 +56,9 @@
 
 <div class="toolbox">
 	<div class="buttons-panel">
-		<button id="btn_add_ival" class="k-button" onclick="btn_newInterval()">Add Interval</button> <br />
-		<button id="btn_add_evt" class="k-button" onclick="btn_newEvent()">Add Event</button> <br />
-		<button id="btn_del_sel" class="k-button" onclick="btn_delSelected()">Delete Selection</button>
+		<button id="btn_add_ival" class="k-button" onclick="Intervals.btnNew()">Add Interval</button> <br />
+		<button id="btn_add_evt" class="k-button" onclick="Events.btnNew()">Add Event</button> <br />
+		<button id="btn_del_sel" class="k-button" onclick="Properties.delSelectedObject()">Delete Selection</button>
 	</div>
 <!--	<div class="interval_type_container"></div>
 	<div class="event_type_container"><input id="select_event_type" placeholder="Select event type"></div>		

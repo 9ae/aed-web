@@ -22,108 +22,114 @@ var protocol = {
 	actions: {}
 };
 
-function checkAgainstTrialDuration(intervals, trial_duration){
-    var total_time = 0.0;
-    for(var i in intervals){
-        var ival = intervals[i];
-        var varyby = findByKey.call(ival.props, 'name', 'varyby');
-        varyby = varyby['value'];
-        if(varyby===null){
-            varyby = 0.0;
-        } else {
-        	varyby = parseFloat(varyby);
-        }
-        total_time += (parseFloat(ival.duration)+varyby);        
-    }
-    return (total_time<=trial_duration);
-}
+var Protocols = {
+	makeNewProtocol : function(paradigm_id){
+		if(paradigm_id===undefined){
+			paradigm_id = sysvars.default_paradigm_id;
+		}
+		var url = '/edit/paradigm/'+paradigm_id+'/make_protocol';
+		var duration = $('input[name="duration"]').val();
+		$.post(url,{'duration':duration}, function(data){
+			protocol.id = data.protocol_id;
+		//	delete sysvars.paradigm_types['protocol_id'];
+			
+			toolbox.interval_typeselect = $("#select_interval_type").kendoComboBox({ dataTextField:"type", dataValueField: "type",
+	          dataSource: data.intervals, select: select_intervalType}).data("kendoComboBox");
+	       	toolbox.event_typeselect = $('#select_event_type').kendoComboBox({ dataTextField:"type", dataValueField: "type",
+	          dataSource: data.events, select: select_eventType}).data("kendoComboBox");
+	          
+	        sysvars.paradigm_types = {};
+			sysvars.paradigm_types['actions'] = array2map(data.actions,mapByType);
+			sysvars.paradigm_types['events'] = array2map(data.events,mapByType);
+			sysvars.paradigm_types['intervals'] = array2map(data.intervals,mapByType);
+			set_trialDuration();
+		});
+		protocol.trial_duration = parseFloat(duration);
+	},
+	delSelectedObject : function(){
+		if(toolbox.selected_intervalId!==-1){
+			Intervals.delSelected();
+		}
+		if(toolbox.selected_actiond!==-1){
+			
+		}
+	},
+};
 
-function matchIdsWithNames(props,map){
-	var len = props.length
-	for(var i=0; i<len; i++){
-		var name = props[i]['name'];
-		props[i]['id'] = map[name];
-	}
-	return props;
-}
+var Durations = {
+	checkAgainstTrialDuration : function(intervals, trial_duration){
+	    var total_time = 0.0;
+	    for(var i in intervals){
+	        var ival = intervals[i];
+	        var varyby = findByKey.call(ival.props, 'name', 'varyby');
+	        varyby = varyby['value'];
+	        if(varyby===null){
+	            varyby = 0.0;
+	        } else {
+	        	varyby = parseFloat(varyby);
+	        }
+	        total_time += (parseFloat(ival.duration)+varyby);        
+	    }
+	    return (total_time<=trial_duration);
+	},
+	edit_trialDuration : function(){
+		Properties.loadInDetails('#trial_duration');
+	},
+};
 
-/* Menu functions */
+var Properties = {
+	matchIdsWithNames: function(props,map){
+		var len = props.length
+		for(var i=0; i<len; i++){
+			var name = props[i]['name'];
+			props[i]['id'] = map[name];
+		}
+		return props;
+	},
+	loadInDetails : function(selector){
+	$('div.details-panel>div').hide();
+	$(selector).show();
+	},
+	clearInDetails : function(){
+	$('div.details-panel>div').hide();
+	},
+};
 
-function edit_trialDuration(){
-	loadInDetails('#trial_duration');
-}
-
-function makeNewProtocol(paradigm_id){
-	if(paradigm_id===undefined){
-		paradigm_id = sysvars.default_paradigm_id;
-	}
-	var url = '/edit/paradigm/'+paradigm_id+'/make_protocol';
-	var duration = $('input[name="duration"]').val();
-	$.post(url,{'duration':duration}, function(data){
-		protocol.id = data.protocol_id;
-	//	delete sysvars.paradigm_types['protocol_id'];
-		
-		toolbox.interval_typeselect = $("#select_interval_type").kendoComboBox({ dataTextField:"type", dataValueField: "type",
-          dataSource: data.intervals, select: select_intervalType}).data("kendoComboBox");
-       	toolbox.event_typeselect = $('#select_event_type').kendoComboBox({ dataTextField:"type", dataValueField: "type",
-          dataSource: data.events, select: select_eventType}).data("kendoComboBox");
-          
-        sysvars.paradigm_types = {};
-		sysvars.paradigm_types['actions'] = array2map(data.actions,mapByType);
-		sysvars.paradigm_types['events'] = array2map(data.events,mapByType);
-		sysvars.paradigm_types['intervals'] = array2map(data.intervals,mapByType);
-		set_trialDuration();
-	});
-	protocol.trial_duration = parseFloat(duration);
-}
-
-/* Button functions */
-
-function btn_newInterval(){
-	loadInDetails('#interval_details');
+var Intervals = {
+	btnNew : function(){
+	Properties.loadInDetails('#interval_details');
 	$('#interval_details button[name="go"]').unbind('click')
 											.text('Make')
 											.click(save_newInterval);
-}
-
-function btn_newEvent(){
-	loadInDetails('#event_details');
-	$('#event_details button[name="go"]').unbind('click')
-											.text('Make')
-											.click(save_newEvent);
-}
-
-function btn_delSelected(){
-	if(toolbox.selected_intervalId!==-1){
+	},
+	delSelected : function(){
 		$.get('/edit/interval/'+toolbox.selected_intervalId+'/delete?pps='+sysvars.pps, function(data){
 			erase_interval(toolbox.selected_intervalId);
 			redraw_intervals_after(data.content.graphOffsets);
 			removeByKey.call(protocol.intervals,'id',toolbox.selected_intervalId);
 			toolbox.selected_intervalId = -1;
 		});
-	}
-	if(toolbox.selected_actiond!==-1){
-		
-	}
-}
+	},
+};
+
+var Events = {
+	btnNew : function(){
+		Properties.loadInDetails('#event_details');
+		$('#event_details button[name="go"]').unbind('click')
+											.text('Make')
+											.click(save_newEvent);
+	},
+	
+};
 
 /*Panel functions */
-
-function loadInDetails(selector){
-	$('div.details-panel>div').hide();
-	$(selector).show();
-}
-
-function clearInDetails(){
-	$('div.details-panel>div').hide();
-}
 
 function set_trialDuration(){
 	var duration = $('.details-panel input[name="duration"]').val();
 	duration = parseFloat(duration);
 	if(isNaN(duration)){
 		alert("Entered duration is not a number");
-	} else if(!checkAgainstTrialDuration(protocol.intervals,duration)) {
+	} else if(!Durations.checkAgainstTrialDuration(protocol.intervals,duration)) {
 		alert('The sum of all interval durations cannot exceed trial duration');
 	}
 	 else {
@@ -138,7 +144,7 @@ function set_trialDuration(){
 		//set graph
 		set_PixelsPerSecond(duration);
 		redraw_all();	
-		clearInDetails();
+		Properties.clearInDetails();
 	}
 }
 
@@ -285,7 +291,7 @@ function save_Interval(evt){
 	if (timesChanged){
 		var intervals = clone(protocol.intervals);
 		intervals[stuff.id] = stuff;
-		timesOkay = checkAgainstTrialDuration(intervals, protocol.trial_duration);
+		timesOkay = Durations.checkAgainstTrialDuration(intervals, protocol.trial_duration);
 		if(varyByKeep){
 			var ind = findIndexByKey.call(stuff.props, 'name', 'varyby');
 			stuff.props.splice(ind, 1);
@@ -334,14 +340,14 @@ function save_newInterval(evt){
 	var intervals = clone(protocol.intervals);
 	postbody.props = props;
 	intervals['new'] = postbody;
-	if(checkAgainstTrialDuration(intervals, protocol.trial_duration)){
+	if(Durations.checkAgainstTrialDuration(intervals, protocol.trial_duration)){
 		postbody.props = JSON.stringify(postbody.props);
 		$.post('/edit/protocol/'+protocol.id+'/new_interval',postbody, function(data){
 				if(data.success){
 					var stuff = postbody;
 					stuff.id = data.content.interval_id
 					var ival = draw_interval(stuff);
-					stuff.props = matchIdsWithNames(props,data.content.prop_ids);
+					stuff.props = Properties.matchIdsWithNames(props,data.content.prop_ids);
 					protocol.intervals.push(stuff);
 					var ilisten = make_IntervalListener(stuff.id);
 					ival.on('click',ilisten);
@@ -440,7 +446,7 @@ function redraw_all(){
 }
 
 window.onload = function() {
-	makeNewProtocol();
+	Protocols.makeNewProtocol();
 	
 	cssExpandHeightUntilEnd('.toolbox');
 	cssExpandHeightUntilEnd('.buttons-panel');
