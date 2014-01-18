@@ -1,7 +1,6 @@
 /* global variables */
 var sysvars = {
 	default_paradigm_id:1,
-	protocol_id:0,
 	paradigm_types: {},
 	pps : 1,
 	paddingTop:40,
@@ -17,6 +16,7 @@ var toolbox = {
 
 // protocol data. stored in json
 var protocol = {
+	id:0,
 	trial_duration:0.0,
 	intervals: [],
 	actions: {}
@@ -100,47 +100,12 @@ function removeByKey(key,value){
     }
 }
 
-function findProp(props, name){
-    var len = props.length;
-    var result = null;
-    for(var i=0; i<len; i++){
-        if(props[i]['name']===name){
-            result = props[i];
-            break;
-        }
-    }
-    return result;
-}
-
-function findPropIndex(props, name){
-    var len = props.length;
-    var result = -1;
-    for(var i=0; i<len; i++){
-        if(props[i]['name']===name){
-            result = i;
-            break;
-        }
-    }
-    return result;
-}
-
-function findPropValue(props, name){
-    var len = props.length;
-    var result = null;
-    for(var i=0; i<len; i++){
-        if(props[i]['name']===name){
-            result = props[i]['value'];
-            break;
-        }
-    }
-    return result;
-}
-
 function checkAgainstTrialDuration(intervals, trial_duration){
     var total_time = 0.0;
     for(var i in intervals){
         var ival = intervals[i];
-        var varyby = findPropValue(ival.props,'varyby');
+        var varyby = findByKey.call(ival.props, 'name', 'varyby');
+        varyby = varyby['value'];
         if(varyby===null){
             varyby = 0.0;
         } else {
@@ -152,7 +117,7 @@ function checkAgainstTrialDuration(intervals, trial_duration){
 }
 
 function matchIdsWithNames(props,map){
-	var len = props.length;
+	var len = props.length
 	for(var i=0; i<len; i++){
 		var name = props[i]['name'];
 		props[i]['id'] = map[name];
@@ -173,7 +138,7 @@ function makeNewProtocol(paradigm_id){
 	var url = '/edit/paradigm/'+paradigm_id+'/make_protocol';
 	var duration = $('input[name="duration"]').val();
 	$.post(url,{'duration':duration}, function(data){
-		sysvars.protocol_id = data.protocol_id;
+		protocol.id = data.protocol_id;
 	//	delete sysvars.paradigm_types['protocol_id'];
 		
 		toolbox.interval_typeselect = $("#select_interval_type").kendoComboBox({ dataTextField:"type", dataValueField: "type",
@@ -241,7 +206,7 @@ function set_trialDuration(){
 	}
 	 else {
 		//end to db
-		$.post('/edit/protocol/'+sysvars.protocol_id+'/set_trial_duration',{'duration':duration},
+		$.post('/edit/protocol/'+protocol.id+'/set_trial_duration',{'duration':duration},
 		function(data){
 			if(!data.success){
 				alert(data.errors[0]);
@@ -343,7 +308,7 @@ function applyChanges(delta){
 			var props = $.parseJSON(delta['props']);
 			var len = props.length;
 			for(var i=0; i<len; i++){
-				var p = findProp(this.props,props[i].name);
+				var p = findByKey.call(this.props, 'name', props[i].name);
 				p.value = props[i].value;
 			}
 		} else {
@@ -378,7 +343,7 @@ function save_Interval(evt){
 	var varyByKeep = false;
 	$('#interval_details div.prop_details input').each(function() {
 		var name = $(this).attr('name');
-		var varybyObj = findProp(stuff.props, name);
+		var varybyObj = findByKey.call(stuff.props,'name',name);
 		if ($(this).val() !== varybyObj.value) {
 			varybyObj.value = $(this).val();
 			if (name === 'varyby') {
@@ -388,7 +353,7 @@ function save_Interval(evt){
 			if (name === 'varyby') {
 				varyByKeep = true;
 			 } else{
-				var ind = findPropIndex(stuff.props, name);
+				var ind = findIndexByKey.call(stuff.props, 'name' ,name);
 				stuff.props.splice(ind, 1);
 			}
 		}
@@ -400,7 +365,7 @@ function save_Interval(evt){
 		intervals[stuff.id] = stuff;
 		timesOkay = checkAgainstTrialDuration(intervals, protocol.trial_duration);
 		if(varyByKeep){
-			var ind = findPropIndex(stuff.props, 'varyby');
+			var ind = findIndexByKey.call(stuff.props, 'name', 'varyby');
 			stuff.props.splice(ind, 1);
 		}
 		if(durationKeep){
@@ -415,14 +380,15 @@ function save_Interval(evt){
 		stuff.pps = sysvars.pps;
 		$.post('/edit/interval/'+stuff.id+'/edit',stuff,function(data){
 			if(data.success){
-				applyChanges.call(findByKey.call(protocol.intervals,'id',toolbox.selected_intervalId),stuff);
+				var ival = findByKey.call(protocol.intervals,'id',toolbox.selected_intervalId);
+				applyChanges.call(ival,stuff);
 				clearIntervalFields();
 				redraw_interval(stuff,data.content.graphOffsets);
+				toolbox.selected_intervalId = -1;
 			} else {
 				alert(data.errors[0]);		
 			}
 		});
-		toolbox.selected_intervalId = -1;
 	} else {
 		alert('The sum of all interval durations cannot exceed trial duration');
 	}		
@@ -448,7 +414,7 @@ function save_newInterval(evt){
 	intervals['new'] = postbody;
 	if(checkAgainstTrialDuration(intervals, protocol.trial_duration)){
 		postbody.props = JSON.stringify(postbody.props);
-		$.post('/edit/protocol/'+sysvars.protocol_id+'/new_interval',postbody, function(data){
+		$.post('/edit/protocol/'+protocol.id+'/new_interval',postbody, function(data){
 				if(data.success){
 					var stuff = postbody;
 					stuff.id = data.content.interval_id
