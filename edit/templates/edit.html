@@ -40,7 +40,7 @@
 		</li>			
 		<li>Edit
 			<ul>
-				<li onclick="Durations.edit_trialDuration()">Trial Duration</li>
+				<li onclick="Durations.menuEditTrialDuration()">Trial Duration</li>
 				<li>Protocol Name</li>
 			</ul>
 		</li>
@@ -58,7 +58,7 @@
 	<div class="buttons-panel">
 		<button id="btn_add_ival" class="k-button" onclick="Intervals.btnNew()">Add Interval</button> <br />
 		<button id="btn_add_evt" class="k-button" onclick="Events.btnNew()">Add Event</button> <br />
-		<button id="btn_del_sel" class="k-button" onclick="Properties.delSelectedObject()">Delete Selection</button>
+		<button id="btn_del_sel" class="k-button" onclick="Protocols.delSelectedObject()">Delete Selection</button>
 	</div>
 <!--	<div class="interval_type_container"></div>
 	<div class="event_type_container"><input id="select_event_type" placeholder="Select event type"></div>		
@@ -68,7 +68,7 @@
 		<label class="info">Trial Duration</label><br />
 		&nbsp;&nbsp;<input type="text" name="duration" value="{{default_duration}}"
 		 placeholder="0.0" class="k-input" /> seconds <br />
-		&nbsp;&nbsp;<button class="k-button" onclick="set_trialDuration()">Set</button>
+		&nbsp;&nbsp;<button class="k-button" onclick="Durations.saveTrialDuration()">Set</button>
 	</div>
 	<div id="interval_details">
 		<input id="select_interval_type" placeholder="Select interval type" />
