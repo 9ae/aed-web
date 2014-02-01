@@ -273,9 +273,9 @@ var Intervals = {
 		var varyByKeep = false;
 		$('#interval_details div.prop_details input').each(function() {
 			var name = $(this).attr('name');
-			var varybyObj = findByKey.call(stuff.props,'name',name);
-			if ($(this).val() !== varybyObj.value) {
-				varybyObj.value = $(this).val();
+			var propObj = findByKey.call(stuff.props,'name',name);
+			if ($(this).val() !== propObj.value) { //prop changed
+				propObj.value = $(this).val();
 				if (name === 'varyby') {
 					timesChanged = true;
 				}
@@ -335,6 +335,9 @@ var Intervals = {
 			obj.name = $(this).attr('name');
 			obj.type = $(this).attr('data-type');
 			obj.value = $(this).val();
+			mapAB(this,obj,'step');
+			mapAB(this,obj,'min');
+			mapAB(this,obj,'max');
 			props.push(obj);
 		});
 		var intervals = clone(protocol.intervals);

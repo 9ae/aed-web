@@ -41,12 +41,7 @@ function mapByType(item){
 }
 
 function clone(obj) {
-    if (null == obj || "object" != typeof obj) return obj;
-    var copy = obj.constructor();
-    for (var attr in obj) {
-        if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-    }
-    return copy;
+	return $.extend(true, {}, obj);
 }
 
 function findByKey(key,value){
@@ -85,4 +80,11 @@ function removeByKey(key,value){
     if(result>=0){
     	this.splice(result,1);
     }
+}
+
+function mapAB(jqObj, obj, attrName){
+	var val = $(jqObj).attr(attrName);
+	if(val!==undefined){
+		obj[attrName] = val;
+	}
 }
