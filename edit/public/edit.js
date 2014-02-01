@@ -217,6 +217,7 @@ var Intervals = {
 			Intervals.redrawIntervalsAfter(data.content.graphOffsets);
 			removeByKey.call(protocol.intervals,'id',toolbox.selected_intervalId);
 			toolbox.selected_intervalId = -1;
+			Intervals.clearPanel();
 		});
 	},
 	selectType : function(e){
@@ -396,6 +397,8 @@ var Intervals = {
 		}
 	},
 	erase : function(id){
+		var intervalDetails = findByKey.call(protocol.intervals,'id',id);
+		toolbox.timeOffset -= intervalDetails.duration;
 		d3.select('#rect'+id).remove();
 	}
 };
