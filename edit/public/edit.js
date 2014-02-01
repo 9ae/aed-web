@@ -206,6 +206,9 @@ var Properties = {
 
 var Intervals = {
 	btnNew : function(){
+	if(toolbox.selected_intervalId!=-1){
+		Intervals.clearPanel();
+	}
 	Properties.loadInDetails('#interval_details');
 	$('#interval_details button[name="go"]').unbind('click')
 											.text('Make')
