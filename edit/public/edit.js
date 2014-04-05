@@ -11,14 +11,14 @@ var sysvars = {
 var toolbox = {
 	timeOffset : 0.0,
 	selected_intervalId:-1,
-	selected_actionId:-1
+	selected_eventId:-1
 };
 
 var protocol = {
 	id:0,
 	trial_duration:0.0,
 	intervals: [],
-	actions: {}
+	events: {}
 };
 
 var Protocols = {
@@ -425,7 +425,79 @@ var Events = {
 	    toolbox.event_colorpicker.value(c); 
 	},
 	saveNew : function(evt){
-		var type = toolbox.event_typeselect.value();	
+		var postbody = {};
+		postbody.type = toolbox.event_typeselect.value();
+		postbody.color = toolbox.event_colorpicker.value();
+		postbody.name = $('#event_name').val();
+		var props = [];
+		$('#event_details div.prop_details input').each(function(){
+			var obj = {};
+			obj.name = $(this).attr('name');
+			obj.type = $(this).attr('data-type');
+			obj.value = $(this).val();
+			mapAB(this,obj,'step');
+			mapAB(this,obj,'min');
+			mapAB(this,obj,'max');
+			props.push(obj);
+		});
+		postbody.props = JSON.stringify(props);
+		console.log(postbody);
+		$.post('/edit/protocol/'+protocol.id+'/new_event',postbody, function(data){
+			if(data.success){
+				var stuff = postbody;
+				stuff.id = data.content.event_id;
+				var circle = Events.draw(stuff);
+				stuff.props = Properties.matchIdsWithNames(props,data.content.prop_ids);
+				protocol.events[stuff.id] = stuff;
+				
+				var ilisten = Events.make_ClickListener(stuff.id);
+				circle.on('click',ilisten);
+				circle.attr('id','circe'+stuff.id);
+				console.log(stuff);
+				Events.clearPanel();
+			} else {
+				alert(data.errors[0]);
+			}
+		});
+		
+	},
+	clearPanel : function(){
+		toolbox.event_typeselect.text('');
+		toolbox.event_typeselect.enable(true);
+		$('#event_name').val('');
+		toolbox.event_colorpicker.value('#FFFFFF');
+		$('#event_details div.prop_details').html('');
+		$('#event_details').hide();
+	},
+	draw : function(properties){
+		var y = $('#flow').height() - 50;
+		var result = d3.select('#flow').append('g');
+		var circle = result.append('circle')
+			.attr('r',20)
+			.attr('fill',properties.color);
+		result.append('text')
+			.style('text-anchor','middle')
+			.attr('font-size','12px')
+			.attr('fill','white')
+			.text(properties.name);
+		result.attr('transform','translate(50,'+y+')' );
+		return result;
+	},
+	make_ClickListener : function(id){
+		return function(data){
+			console.log('clicked e'+id);
+			toolbox.selected_eventId = id;
+			var stuff = protocol.events[id];
+			toolbox.event_typeselect.value(stuff.type);
+			toolbox.event_typeselect.enable(false);
+			$('#event_name').val(stuff.name);
+			toolbox.event_colorpicker.value(stuff.color);
+			Properties.populatePanel(stuff.props,'#event_details');
+			$('#event_details button[name="go"]').unbind('click')
+												.text('Save')
+												.click(Intervals.save);
+			$('#event_details').show(); 
+		}
 	},
 };
 

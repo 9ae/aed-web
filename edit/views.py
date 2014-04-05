@@ -250,3 +250,40 @@ def delete_interval(request,interval_id):
 	interval.delete()
 	
 	return HttpResponse(m.serialize(),content_type="application/json")
+
+@csrf_exempt
+def new_event(request,protocol_id):
+	m = Medea()
+	pid = int(protocol_id)
+	protocol = None
+	try:
+		protocol = models.Protocol.objects.get(id=pid)
+	except ObjectDoesNotExist:
+		m.addError('Protocol ID not found')
+		return HttpResponse(m.serialize(),content_type="application/json")
+	etype = request.POST.get('type',None)
+	if etype==None:
+		m.addError('Event type must be specified')
+		return HttpResponse(m.serialize(),content_type="application/json")
+	ename = request.POST.get('name',etype);
+	color = request.POST.get('color','000000')
+	if len(color)==7:
+		color = color[1:]
+	props = request.POST.get('props',None)
+	props = json.loads(props)
+	
+	event = models.Event(protocol=protocol,type=etype, name=ename, color=color)
+	event.save()
+	
+	names_id_map = {}	
+	for i in range(0,len(props)):
+		p = props[i]
+		prop = models.AIEProperty(prop_type=p['type'],prop_name=p['name'])
+		prop.set(p['value'])
+		prop.save()
+		event.props.add(prop)
+		names_id_map[prop.prop_name] = prop.pk
+	
+	m.addContent('event_id', event.pk)
+	m.addContent('prop_ids',names_id_map)
+	return HttpResponse(m.serialize(),content_type="application/json")
