@@ -321,7 +321,8 @@ var Intervals = {
 			});
 		} else {
 			alert('The sum of all interval durations cannot exceed trial duration');
-		}		
+		}
+				
 	},
 	saveNew : function(evt){
 		var postbody = {};
@@ -424,6 +425,47 @@ var Events = {
 	    var c = kendo.parseColor('#'+sysvars.paradigm_types.events[text].color);
 	    toolbox.event_colorpicker.value(c); 
 	},
+	save: function(evt){
+		var stuff = clone(protocol.events[toolbox.selected_eventId]);
+		
+		if ($('#event_name').val() !== stuff.name) {
+			stuff.name = $('#event_name').val();
+		} else {
+			delete stuff.name;
+		}
+		if (toolbox.event_colorpicker.value() !== stuff.color) {
+			stuff.color = toolbox.event_colorpicker.value();
+		} else {
+			delete stuff.color;
+		}
+
+		$('#event_details div.prop_details input').each(function() {
+			var name = $(this).attr('name');
+			var propObj = findByKey.call(stuff.props,'name',name);
+			if ($(this).val() !== propObj.value) { //prop changed
+				propObj.value = $(this).val();
+			} else {
+				var ind = findIndexByKey.call(stuff.props, 'name' ,name);
+				stuff.props.splice(ind, 1);
+			}
+		});
+	
+		delete stuff.type;
+		// do post
+		stuff.props = JSON.stringify(stuff.props);
+		console.log(stuff);
+		$.post('/edit/event/'+stuff.id+'/edit',stuff,function(data){
+			if(data.success){
+				var evt = protocol.events[toolbox.selected_eventId];
+				Properties.applyChanges.call(evt,stuff);
+				Events.clearPanel();
+				Events.redraw(stuff);
+				toolbox.selected_eventId = -1;
+			} else {
+				alert(data.errors[0]);		
+			}
+		});	
+	},
 	saveNew : function(evt){
 		var postbody = {};
 		postbody.type = toolbox.event_typeselect.value();
@@ -483,6 +525,18 @@ var Events = {
 		result.attr('transform','translate(50,'+y+')' );
 		return result;
 	},
+	redraw : function(properties){
+		console.log(properties);
+		var group = d3.select('#circe'+properties.id);
+		console.log(group);
+		if(properties.color!==undefined){
+			group.select('circle').attr('fill',properties.color);
+		}
+		
+		if(properties.name!==undefined){
+			group.select('text').attr('text',properties.name);
+		}
+	}, 
 	make_ClickListener : function(id){
 		return function(data){
 			console.log('clicked e'+id);
@@ -495,7 +549,7 @@ var Events = {
 			Properties.populatePanel(stuff.props,'#event_details');
 			$('#event_details button[name="go"]').unbind('click')
 												.text('Save')
-												.click(Intervals.save);
+												.click(Events.save);
 			$('#event_details').show(); 
 		}
 	},

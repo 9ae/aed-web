@@ -14,4 +14,5 @@ urlpatterns = patterns('',
 	url(r'^interval/(?P<interval_id>\d+)/edit$', views.edit_interval),
 	url(r'^interval/(?P<interval_id>\d+)/delete', views.delete_interval),
 	url(r'^protocol/(?P<protocol_id>\d+)/new_event$', views.new_event),
+	url(r'^event/(?P<event_id>\d+)/edit$', views.edit_event),
 )

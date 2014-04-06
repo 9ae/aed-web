@@ -287,3 +287,37 @@ def new_event(request,protocol_id):
 	m.addContent('event_id', event.pk)
 	m.addContent('prop_ids',names_id_map)
 	return HttpResponse(m.serialize(),content_type="application/json")
+
+@csrf_exempt
+def edit_event(request,event_id):
+	m = Medea()
+	eid = int(event_id)
+	event = None
+	try:
+		event = models.Event.objects.get(id=eid)
+	except ObjectDoesNotExist:
+		m.addError('Event ID not found')
+		return HttpResponse(m.serialize(),content_type="application/json")
+	
+	name = request.POST.get('name',None)
+	if name!=None:
+		event.name = name
+	
+	color = request.POST.get('color',None)
+	if color!=None:
+		if len(color)==7:
+			color = color[1:]
+		event.color = color
+	
+	event.save()
+	
+	props = request.POST.get('props',[])
+	props = json.loads(props)
+		
+	for i in range(0,len(props)):
+		p = props[i]
+		prop = models.AIEProperty.objects.get(id=p['id'])
+		prop.set(p['value'])
+		prop.save()
+	
+	return HttpResponse(m.serialize(),content_type="application/json")
